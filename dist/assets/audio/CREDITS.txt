@@ -1,0 +1,43 @@
+Fretwise audio sources — Release 8, 14 October 2026
+
+Current instrument samples, all released under CC0 1.0 Universal:
+
+Shinyguitar — Karoryfer Samples, recorded/mapped by D. Smolken.
+https://github.com/sfzinstruments/karoryfer.shinyguitar
+82 electric-pickup samples: soft/hard attacks, two alternate takes per pitch,
+release recordings, and two muted-string noises. Sixteen sampled pitches.
+
+Black And Blue Basses — Karoryfer Samples.
+https://github.com/sfzinstruments/karoryfer.black-and-blue-basses
+36 fingered Darkblack bass samples: nine pitches, two dynamic layers and two takes.
+Pitch labels adjusted for the library's transposing bass convention.
+
+Virtuosity Drums — Versilian Studios and Karoryfer Samples.
+https://github.com/sfzinstruments/virtuosity_drums
+32 acoustic kit samples: kick, snare, closed/half-open hi-hat, ride, crash and two toms.
+Overhead microphone recordings; two dynamic ranges and alternate recordings.
+
+Publisher confirmation of CC0 for the free libraries:
+https://shop.karoryfer.com/pages/free-samples
+CC0 legal code: https://creativecommons.org/publicdomain/zero/1.0/
+Copies of upstream licenses are in assets/audio/studio/*-LICENSE.txt.
+File-level source paths and SHA-256 hashes: assets/audio/studio/provenance.json.
+
+Preparation: selected recordings, bounded duration, mono downmix, 32 kHz sample
+rate, common instrument gain and end fades, MP3 compression for web delivery.
+Playback: dynamic-layer/alternate-take selection, pitch resampling, amp EQ,
+crunch/lead shaping, envelopes, optional release noises, delay and compression.
+The muted-string noise recordings are included for future articulation work;
+current pitched muted notes use shortened sustained recordings.
+
+Backing arrangements: composed and rendered for Fretwise using the above samples.
+After midnight — slow minor blues in A, 72 BPM.
+Dusty road shuffle — 12-bar A blues, 86 BPM.
+Open road — 12-bar E blues rock, 104 BPM.
+Pocket conversation — A Dorian funk vamp, 100 BPM.
+Each has guitar, bass and drum stems plus a full mix. No artist recordings used.
+
+Legacy (superseded) bank: FluidR3_GM, converted by Benjamin Gleitzman / MIDI.js
+Soundfonts, CC BY 3.0. assets/audio/guitar-bank.json is retained as a source-history
+artifact and is not requested by current playback.
+https://github.com/gleitz/midi-js-soundfonts

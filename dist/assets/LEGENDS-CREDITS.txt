@@ -1,0 +1,35 @@
+Fretwise Legends — source notes, 14 October 2026
+
+Embedded practice phrases are technique studies, not song transcriptions.
+
+Hendrix study, first-bar repeating double-stop motif:
+Adapted from Repeating Pattern -5.jpg, Red Rooster (author assumed by Wikimedia Commons).
+https://commons.wikimedia.org/wiki/File:Repeating_Pattern_-5.jpg
+File released by its copyright holder into the public domain, worldwide.
+Adaptations: timing interpreted as eighth-note triplets; a new answer added.
+
+Page study, first-bar legato motif:
+Adapted from Repeating Pattern -6.jpg, Red Rooster (author assumed by Wikimedia Commons).
+https://commons.wikimedia.org/wiki/File:Repeating_Pattern_-6.jpg
+File released by its copyright holder into the public domain, worldwide.
+Adaptations: one bar of the repeated motif; a new bend/descending answer added.
+
+Clapton study, first-bar legato motif:
+Adapted from Repeating Pattern -7.jpg, Red Rooster (author assumed by Wikimedia Commons).
+https://commons.wikimedia.org/wiki/File:Repeating_Pattern_-7.jpg
+File released by its copyright holder into the public domain, worldwide.
+Adaptations: one bar of the repeated motif; a new blues-third answer added.
+
+The player associations are Fretwise pedagogical choices. Wikimedia Commons does
+not identify these motifs as transcriptions of those artists.
+SRV and Moore studies and all added answers are newly composed for Fretwise.
+
+Linked lessons are kept at their original sites; no publisher tab bundle, tab
+image, lesson audio, artist recording or video has been bundled or rehosted.
+Actual song-study links point to the Guitar Pro / Arobas Music free bundle:
+https://www.guitar-pro.com/blog/p/11515-must-know-blues-guitar-licks
+Includes Mary Had a Little Lamb, Hey Joe, Since I've Been Loving You,
+Further Up on the Road and Still Got the Blues.
+The publisher describes free access but does not identify an open-source license.
+
+Playback uses the existing FluidR3 samples; see assets/audio/CREDITS.txt.

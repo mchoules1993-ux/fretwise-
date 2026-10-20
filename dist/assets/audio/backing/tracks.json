@@ -1,0 +1,294 @@
+[
+  {
+    "id": "slow-minor",
+    "name": "After midnight",
+    "style": "Slow minor blues",
+    "root": 9,
+    "key": "A minor",
+    "bpm": 72,
+    "scale": "aeolian",
+    "seq": [
+      [
+        0,
+        "m7"
+      ],
+      [
+        5,
+        "m7"
+      ],
+      [
+        0,
+        "m7"
+      ],
+      [
+        0,
+        "m7"
+      ],
+      [
+        8,
+        "maj7"
+      ],
+      [
+        5,
+        "m7"
+      ],
+      [
+        7,
+        "7"
+      ],
+      [
+        0,
+        "m7"
+      ]
+    ],
+    "nums": [
+      "i7",
+      "iv7",
+      "i7",
+      "i7",
+      "\u266dVImaj7",
+      "iv7",
+      "V7",
+      "i7"
+    ],
+    "description": "Spacious chord replies, melodic bass and a restrained acoustic kit.",
+    "duration": 26.66665625,
+    "frames": 853333,
+    "sampleRate": 32000,
+    "stems": {
+      "guitar": "/assets/audio/backing/slow-minor-guitar.mp3",
+      "bass": "/assets/audio/backing/slow-minor-bass.mp3",
+      "drums": "/assets/audio/backing/slow-minor-drums.mp3",
+      "mix": "/assets/audio/backing/slow-minor-mix.mp3"
+    }
+  },
+  {
+    "id": "texas-shuffle",
+    "name": "Dusty road shuffle",
+    "style": "Texas shuffle",
+    "root": 9,
+    "key": "A blues",
+    "bpm": 86,
+    "scale": "mixolydian",
+    "seq": [
+      [
+        0,
+        "7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        7,
+        "7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        7,
+        "7"
+      ]
+    ],
+    "nums": [
+      "I7",
+      "IV7",
+      "I7",
+      "I7",
+      "IV7",
+      "IV7",
+      "I7",
+      "I7",
+      "V7",
+      "IV7",
+      "I7",
+      "V7"
+    ],
+    "description": "Long\u2013short rhythm guitar, a walking bass line and shuffle drums.",
+    "duration": 33.488375,
+    "frames": 1071628,
+    "sampleRate": 32000,
+    "stems": {
+      "guitar": "/assets/audio/backing/texas-shuffle-guitar.mp3",
+      "bass": "/assets/audio/backing/texas-shuffle-bass.mp3",
+      "drums": "/assets/audio/backing/texas-shuffle-drums.mp3",
+      "mix": "/assets/audio/backing/texas-shuffle-mix.mp3"
+    }
+  },
+  {
+    "id": "blues-rock",
+    "name": "Open road",
+    "style": "Driving blues rock",
+    "root": 4,
+    "key": "E blues",
+    "bpm": 104,
+    "scale": "mixolydian",
+    "seq": [
+      [
+        0,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        7,
+        "7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        0,
+        "7"
+      ],
+      [
+        7,
+        "7"
+      ]
+    ],
+    "nums": [
+      "I7",
+      "I7",
+      "I7",
+      "I7",
+      "IV7",
+      "IV7",
+      "I7",
+      "I7",
+      "V7",
+      "IV7",
+      "I7",
+      "V7"
+    ],
+    "description": "Crunchy boogie guitar, picked-feel bass accents and a driving backbeat.",
+    "duration": 27.6923125,
+    "frames": 886154,
+    "sampleRate": 32000,
+    "stems": {
+      "guitar": "/assets/audio/backing/blues-rock-guitar.mp3",
+      "bass": "/assets/audio/backing/blues-rock-bass.mp3",
+      "drums": "/assets/audio/backing/blues-rock-drums.mp3",
+      "mix": "/assets/audio/backing/blues-rock-mix.mp3"
+    }
+  },
+  {
+    "id": "clean-funk",
+    "name": "Pocket conversation",
+    "style": "Clean funk",
+    "root": 9,
+    "key": "A Dorian",
+    "bpm": 100,
+    "scale": "dorian",
+    "seq": [
+      [
+        0,
+        "m7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        0,
+        "m7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        0,
+        "m7"
+      ],
+      [
+        5,
+        "7"
+      ],
+      [
+        0,
+        "m7"
+      ],
+      [
+        5,
+        "7"
+      ]
+    ],
+    "nums": [
+      "i7",
+      "IV7",
+      "i7",
+      "IV7",
+      "i7",
+      "IV7",
+      "i7",
+      "IV7"
+    ],
+    "description": "Muted guitar stabs, syncopated bass, hi-hat accents and ghost notes.",
+    "duration": 19.2,
+    "frames": 614400,
+    "sampleRate": 32000,
+    "stems": {
+      "guitar": "/assets/audio/backing/clean-funk-guitar.mp3",
+      "bass": "/assets/audio/backing/clean-funk-bass.mp3",
+      "drums": "/assets/audio/backing/clean-funk-drums.mp3",
+      "mix": "/assets/audio/backing/clean-funk-mix.mp3"
+    }
+  }
+]
