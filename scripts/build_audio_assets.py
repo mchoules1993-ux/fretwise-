@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 
 ROOT=Path(__file__).resolve().parents[1]
-DEST=ROOT/'dist/assets/audio/studio'
+DEST=ROOT/'site/assets/audio/studio'
 NOTES={'c':0,'db':1,'d':2,'eb':3,'e':4,'f':5,'gb':6,'g':7,'ab':8,'a':9,'bb':10,'b':11}
 def midi(note):
  m=re.fullmatch(r'([a-g]b?)(\d)',note);return NOTES[m[1]]+12*(int(m[2])+1)

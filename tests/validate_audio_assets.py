@@ -3,7 +3,7 @@ import base64,json,subprocess,tempfile
 from pathlib import Path
 import numpy as np
 ROOT=Path(__file__).resolve().parents[1]
-folder=ROOT/'dist/assets/audio'
+folder=ROOT/'site/assets/audio'
 rows=json.loads((folder/'studio/provenance.json').read_text())
 assert len(rows)==150
 for bank in ['guitar','bass','drums']:
@@ -26,7 +26,7 @@ for track in tracks:
  assert abs(track['duration']-len(track['seq'])*4*60/track['bpm'])<.001
  lengths=[]
  for name,url in track['stems'].items():
-  source=ROOT/'dist'/url.lstrip('/')
+  source=ROOT/'site'/url.lstrip('/')
   pcm=subprocess.check_output(['ffmpeg','-v','error','-i',str(source),'-f','f32le','-ar','32000','-ac','2','-'])
   data=np.frombuffer(pcm,dtype='<f4').reshape(-1,2);lengths.append(len(data))
   assert np.isfinite(data).all()
