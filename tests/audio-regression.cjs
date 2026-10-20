@@ -8,6 +8,15 @@ const c=vm.createContext({console,Float32Array,Uint8Array,DataView,ArrayBuffer,M
 for(const f of ['sampled-audio','backing','licks','rhythm','releases','app'])vm.runInContext(fs.readFileSync(`dist/${f}.js`,'utf8'),c,{filename:f});
 const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)await Promise.resolve()};
 (async()=>{
+ // Opening Jam Room must render every arranged track without progression-only metadata.
+ const expectedChords=[['Am7','Dm7','Am7','Am7','Fmaj7','Dm7','E7','Am7'],['A7','D7','A7','A7','D7','D7','A7','A7','E7','D7','A7','E7'],['E7','E7','E7','E7','A7','A7','E7','E7','B7','A7','E7','B7'],['Am7','D7','Am7','D7','Am7','D7','Am7','D7']];
+ for(let i=0;i<expectedChords.length;i++){
+  run(`state.studioTrack=${i};navigate('jam')`);
+  assert.match(element('main').innerHTML,/id="start-jam"/);
+  assert.equal(element('jam-now').textContent,`Bar 1 · ${expectedChords[i][0]}`);
+  assert.deepEqual(JSON.parse(run('JSON.stringify(activeJamProgression().seq.map((_,i)=>progName(activeJamProgression(),i)))')),expectedChords[i]);
+ }
+ run("navigate('scales')");
  // Delay sample loading, then cancel. Completed loading must not restart playback.
  run("state.view='legends';loadGuitarSamples=()=>new Promise(resolve=>{globalThis.completeLoad=resolve});");
  const pending=run('playBluesLick(0)');await flush();run('stopAudio()');c.completeLoad();await pending;
