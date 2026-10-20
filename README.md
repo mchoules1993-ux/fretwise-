@@ -22,12 +22,12 @@ Fretwise is an interactive guitar theory studio for learning scales, modes, harm
 
 ## Run locally
 
-The site is plain HTML, CSS and JavaScript with no build step or paid APIs. Serve the `dist` directory with any static web server.
+The site is plain HTML, CSS and JavaScript with no build step or paid APIs. Serve the `site` directory with any static web server.
 
 For example:
 
 ```bash
-python3 -m http.server 8000 --directory dist
+python3 -m http.server 8000 --directory site
 ```
 
 Then open `http://localhost:8000`.
@@ -36,7 +36,7 @@ Then open `http://localhost:8000`.
 
 https://fretwise-guitar-studio.mchoules1293.chatgpt.site
 
-Audio sample sources and licenses: `dist/assets/audio/CREDITS.txt`. The bundled bank avoids runtime third-party dependencies.
+Audio sample sources and licenses: `site/assets/audio/CREDITS.txt`. The bundled bank avoids runtime third-party dependencies.
 
 ## Rebuild the audio assets
 
@@ -47,7 +47,7 @@ python scripts/build_audio_assets.py --cache /absolute/path/to/audio-cache
 python scripts/render_backing_tracks.py --cache /absolute/path/to/audio-cache
 ```
 
-`dist/assets/audio/studio/provenance.json` records each source file and SHA-256.
+`site/assets/audio/studio/provenance.json` records each source file and SHA-256.
 All newly bundled sample libraries are CC0; source licenses are retained alongside them.
 The bass library uses transposing key labels; preparation maps its B1-labelled sample
 (which sounds at approximately 31 Hz) to MIDI 23, B0.

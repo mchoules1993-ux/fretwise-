@@ -97,7 +97,7 @@ class Renderer:
    path=output/(self.track['id']+'-'+name+'.mp3');raw=np.clip(data,-1,1).astype('<f4').tobytes();subprocess.run(['ffmpeg','-v','error','-y','-f','f32le','-ar',str(RATE),'-ac','2','-i','pipe:0','-codec:a','libmp3lame','-b:a','160k',str(path)],input=raw,check=True);files[name]='/assets/audio/backing/'+path.name
   return{**self.track,'duration':self.frames/RATE,'frames':self.frames,'sampleRate':RATE,'stems':files}
 if __name__=='__main__':
- p=argparse.ArgumentParser();p.add_argument('--cache',type=Path,required=True);a=p.parse_args();inventory=json.loads((ROOT/'dist/assets/audio/studio/provenance.json').read_text());dest=ROOT/'dist/assets/audio/backing';dest.mkdir(exist_ok=True);tracks=[]
+ p=argparse.ArgumentParser();p.add_argument('--cache',type=Path,required=True);a=p.parse_args();inventory=json.loads((ROOT/'site/assets/audio/studio/provenance.json').read_text());dest=ROOT/'site/assets/audio/backing';dest.mkdir(exist_ok=True);tracks=[]
  for track in TRACKS:
   tracks.append(Renderer(a.cache,inventory,track).save(dest));print('Rendered',track['name'],flush=True)
  (dest/'tracks.json').write_text(json.dumps(tracks,indent=2))
