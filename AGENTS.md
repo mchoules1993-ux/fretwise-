@@ -68,6 +68,8 @@ After publishing, add a line to the handoff log saying which commit went live.
 
 ## Handoff log
 
+- 2026-10-24 · ChatGPT · Published `main` commit `6a1135ffac327ccceaf80fe7e48a4f108d1ada3a` to the existing live Fretwise Site (version 9), using the exact contents of `site/`. Both regression checks passed. · published; handoff-log PR open
+
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
