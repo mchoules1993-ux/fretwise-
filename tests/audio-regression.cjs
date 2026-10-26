@@ -69,6 +69,41 @@ const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)awai
  // The live guide must distinguish minor-seventh and dominant-seventh harmony.
  assert.equal(run("state.jamMode='studio';state.studioTrack=0;state.root=9;state.jamScale='follow';jamTheory(0).scaleKey"),'dorian');
  assert.equal(run('jamTheory(6).scaleKey'),'mixolydian');
+ // Each player has a genuinely new faster phrase; the shared player must schedule
+ // every fast study at its own tempo and at both slower practice speeds.
+ const fastStudies=JSON.parse(run('JSON.stringify(LEGEND_LICKS.slice(5))'));
+ assert.deepEqual(fastStudies.map(l=>l.name.split(' · ')[0]),['SRV','Hendrix','Page','Clapton','Moore']);
+ // The Hendrix double-stop hammers G5 to G7; the unchanged B5 must not
+ // inherit that marking and falsely teach a same-fret hammer-on.
+ const hendrixFastTab=run('lickTab(LEGEND_LICKS[6],6)');
+ assert.match(hendrixFastTab,/>h7<\/text>/);
+ assert.doesNotMatch(hendrixFastTab,/>h5<\/text>/);
+ const fastBpms=[120,112,140,116,128];
+ for(let offset=0;offset<5;offset++){
+  const index=offset+5,lick=fastStudies[offset];
+  assert.equal(lick.bpm,fastBpms[offset]);
+  assert.notDeepEqual(lick.events,JSON.parse(run(`JSON.stringify(LEGEND_LICKS[${offset}].events)`)));
+  for(const speed of [60,75,100]){
+   run(`state.view='legends';lickOptions.speed=${speed};lickOptions.loop=false;lickOptions.backing=true`);
+   await run(`playBluesLick(${index})`);
+   const beatSeconds=60/(fastBpms[offset]*speed/100);
+   assert.ok(Math.abs(run('lickRun.seconds')-beatSeconds)<1e-10);
+   assert.ok(Math.abs(run('lickRun.when-lickRun.start')-4*beatSeconds)<1e-10);
+   assert.equal(run('lickRun.index'),index);assert.equal(run('playing'),true);
+   const page=run('legendsView()');
+   assert.match(page,new RegExp(`${Math.round(fastBpms[offset]*speed/100)} BPM`));
+   assert.match(page,/LICK 10 · /);assert.doesNotMatch(page,/LICK 010/);
+   assert.equal((page.match(/class="panel lick-card"/g)||[]).length,10);
+   run('stopAudio()');assert.equal(run('lickRun'),null);assert.equal(run('playing'),false);
+  }
+ }
+ // Export the final fast study at 75%: 128 BPM becomes 96 BPM, including
+ // the same two-bar phrase, without falling back to one of the original studies.
+ run("state.view='legends';lickOptions.speed=75;globalThis.fastExportButton={disabled:false}");
+ const fastExport=run('downloadBluesLick(9,fastExportButton)');await flush();
+ c.finishRender({getChannelData:()=>new Float32Array(128)});await fastExport;
+ assert.match(element('download').download,/fretwise-legends-lick-10-96bpm/);
+ assert.equal(run('fastExportButton.disabled'),false);
  // Every new phrase must fit the declared two bars and generate valid mobile + wide SVG.
  for(let i=0;i<run('LEGEND_LICKS.length');i++){
   const events=JSON.parse(run(`JSON.stringify(LEGEND_LICKS[${i}].events)`));
@@ -76,5 +111,5 @@ const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)awai
   const html=run(`lickTab(LEGEND_LICKS[${i}],${i})`);assert.equal((html.match(/class="beat-tile"/g)||[]).length,8);assert.ok(!/NaN|undefined/.test(html));
   assert.equal((html.match(/<svg[ >]/g)||[]).length,(html.match(/<\/svg>/g)||[]).length);
  }
- console.log('PASS: cancelled loads, competing Play taps, 12 exact loop cycles, stopped callbacks, isolated export bus, source cleanup, five valid phrasing studies, mobile SVGs, sample velocities/takes, cancelled backing downloads, aligned stems, live mixer and chord-guide quality.');
+ console.log('PASS: cancelled loads, competing Play taps, 12 exact loop cycles, stopped callbacks, isolated export bus, source cleanup, ten valid phrasing studies, five fast studies at three practice speeds, fast WAV export, mobile SVGs, sample velocities/takes, cancelled backing downloads, aligned stems, live mixer and chord-guide quality.');
 })().catch(e=>{console.error(e);process.exitCode=1});
