@@ -71,9 +71,10 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
+- 2026-10-26 · ChatGPT · Published `main` commit `d705637350a8a58de0776b8ecb01156122f65a92` to the existing Fretwise Site as version 11, using the exact contents of `site/`. Both regression checks passed. · published
 - 2026-10-26 · ChatGPT · Published `main` commit `203bcfc8e1884e558bf8bf085b10782acba8e53d` to the existing Fretwise Site as version 10, using the exact contents of `site/`. Both regression checks passed. · published
 - 2026-10-24 · ChatGPT · Published `main` commit `6a1135ffac327ccceaf80fe7e48a4f108d1ada3a` to the existing Fretwise Site as version 9, using the exact contents of `site/`. Both regression checks passed. · published
-- 2026-10-26 · ChatGPT · Rewrote harmony explanations for guitar players; added play-and-listen examples and YouTube links for C major and A minor. · mchoules1993-ux/fretwise-#5 · merged, not yet published
+- 2026-10-26 · ChatGPT · Rewrote harmony explanations for guitar players; added play-and-listen examples and YouTube links for C major and A minor. · mchoules1993-ux/fretwise-#5 · merged and published
 - 2026-10-26 · ChatGPT · Added five faster Legends studies (112–140 BPM), tabs, tips and credits; verified practice speeds and WAV downloads. · mchoules1993-ux/fretwise-#4 · merged and published
 - 2026-10-20 · Claude · Added this rules file (`AGENTS.md`) and `CLAUDE.md`. · mchoules1993-ux/fretwise-#2 · merged, not yet published
 - 2026-10-20 · Claude · Renamed `dist/` to `site/`. · mchoules1993-ux/fretwise-#1 · merged, not yet published
