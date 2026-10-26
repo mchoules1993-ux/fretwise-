@@ -71,6 +71,7 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
+- 2026-10-26 · ChatGPT · Added five faster Legends studies (112–140 BPM), tabs, tips and credits; verified practice speeds and WAV downloads. · `feat/faster-legends-licks` · PR pending; not merged or published
 - 2026-10-20 · Claude · Added this rules file (`AGENTS.md`) and `CLAUDE.md`. · mchoules1993-ux/fretwise-#2 · merged, not yet published
 - 2026-10-20 · Claude · Renamed `dist/` to `site/`. · mchoules1993-ux/fretwise-#1 · merged, not yet published
 - 2026-10-20 · ChatGPT · Fixed Jam Room navigation for arranged tracks. · merged, not yet published
