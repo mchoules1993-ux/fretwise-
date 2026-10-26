@@ -43,5 +43,16 @@ with new entries at indices 5–9, retaining all existing controls.
   update the Legends intro, release list, README and credits.
 - [x] Run `node tests/audio-regression.cjs` and
   `python3 tests/validate_audio_assets.py`; both must exit 0 with PASS.
-- [ ] Review the diff and rendered page; commit changes and handoff entry.
-- [ ] Fetch main again, verify no conflict, push the feature branch and open a PR.
+- [x] Review the diff and rendered page; commit changes and handoff entry.
+- [x] Fetch main again, verify no conflict and push the feature branch.
+- [ ] Open a PR: blocked by the environment's HTTP CONNECT 403 for api.github.com.
+
+## Execution evidence
+
+The regression test first failed because the five faster studies were absent,
+then passed after implementation. Both repository checks and real Chromium
+desktop/phone validation passed, including all five studies at 60/75/100% and
+all five real stereo WAV exports with correct durations and non-silent audio.
+A fresh code review found one Hendrix double-stop annotation inherited by an
+unchanged note. A new failing tab test demonstrated it; the extra note now
+explicitly clears the hammer-on marking. No other implementation issues found.

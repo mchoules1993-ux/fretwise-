@@ -73,6 +73,11 @@ const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)awai
  // every fast study at its own tempo and at both slower practice speeds.
  const fastStudies=JSON.parse(run('JSON.stringify(LEGEND_LICKS.slice(5))'));
  assert.deepEqual(fastStudies.map(l=>l.name.split(' · ')[0]),['SRV','Hendrix','Page','Clapton','Moore']);
+ // The Hendrix double-stop hammers G5 to G7; the unchanged B5 must not
+ // inherit that marking and falsely teach a same-fret hammer-on.
+ const hendrixFastTab=run('lickTab(LEGEND_LICKS[6],6)');
+ assert.match(hendrixFastTab,/>h7<\/text>/);
+ assert.doesNotMatch(hendrixFastTab,/>h5<\/text>/);
  const fastBpms=[120,112,140,116,128];
  for(let offset=0;offset<5;offset++){
   const index=offset+5,lick=fastStudies[offset];

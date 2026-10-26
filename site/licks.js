@@ -43,7 +43,7 @@ const LEGEND_LICKS=[
  {b:5,s:2,f:5,d:1/3,legato:'p'},{b:16/3,s:3,f:7,d:1/3},{b:17/3,s:3,f:5,d:1/3},
  {b:6,s:3,f:6,d:2/3,legato:'h'},{b:20/3,s:4,f:7,d:4/3,v:true}]},
  {name:'Hendrix · Double-stop sprint',bpm:112,fast:true,area:'Frets 5–8',feel:'Straight sixteenths · four per beat',backing:'m',song:'Hey Joe',focus:'Double-stop punctuation · quick pentatonic fills · space',tip:'Treat the paired notes as short chord stabs, then answer with a quick single-note fill. Pick e8 and pull off to e5; pick B8 and pull off to B5. Keep both strings of each double-stop balanced. The silence after the first fill is intentional: mute, count, and enter the second bar together. Finish on A at D7.',credit:'Newly composed Fretwise fast study of double-stop punctuation and pentatonic fills. Not a transcription of a Hendrix song or recording.',lesson:'https://www.guitarlickdojo.com/lesson/5-licks-to-play-with-voodoo-child-jimi-hendrix-stevie-ray-vaughan/',events:[
- {b:0,s:2,f:5,d:.5,extra:[{s:3,f:5}],accent:1.1},{b:.5,s:3,f:7,d:.5,legato:'h',extra:[{s:2,f:5}]},
+ {b:0,s:2,f:5,d:.5,extra:[{s:3,f:5}],accent:1.1},{b:.5,s:3,f:7,d:.5,legato:'h',extra:[{s:2,f:5,legato:null}]},
  {b:1.5,s:1,f:5,d:.5,extra:[{s:2,f:5}]},
  {b:2,s:1,f:8,d:.25},{b:2.25,s:1,f:5,d:.25,legato:'p'},{b:2.5,s:2,f:8,d:.25},{b:2.75,s:2,f:5,d:.25,legato:'p'},
  {b:4,s:1,f:5,d:.5,extra:[{s:2,f:5}]},{b:4.5,s:2,f:8,d:.5,extra:[{s:3,f:7}]},
