@@ -15,7 +15,7 @@ Fretwise is an interactive guitar theory studio for learning scales, modes, harm
 - Four original A-minor blues-rock licks with rhythmic tabs, bend/vibrato audio, count-in, slower practice speeds, looping, optional backing and WAV downloads
 
 - Rhythm & Beats: 4/4 note values, counting, rests, five playable patterns and tap practice with timing feedback
-- Legends: five distinct phrasing studies for SRV, Hendrix, Page, Clapton and Moore, including three adapted public-domain motifs, song-study links, shuffle/triplet/sixteenth timing, and appropriate backing
+- Legends: ten distinct phrasing studies (five foundations and five faster studies at 112–140 BPM) for SRV, Hendrix, Page, Clapton and Moore, including three adapted public-domain motifs, song-study links, shuffle/triplet/sixteenth timing, and appropriate backing
 - Four original arranged backing tracks with synchronized guitar/bass/drum stems, live mixer, count-in, MP3 downloads and chord-following note guides
 - Release list: complete implemented-feature catalogue, section links and release history
 - Persistent audio Stop/status, audio-clock lick loops, readable phone beat panels, responsive layouts, keyboard access and optional browser-assistant scale setup

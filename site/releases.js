@@ -54,12 +54,13 @@ const FEATURE_CATALOGUE=[
  'Tap or Space-key practice against the metronome, with matched attacks, missed notes, extra taps and average timing difference.',
  'One-note guitar practice prompts and a link to Legends; tap feedback notes the effect of device audio latency.'
  ]},
- {view:'legends',title:'Legends',description:'Five phrasing studies, public-domain motifs and linked player lessons.',items:[
+ {view:'legends',title:'Legends',description:'Ten phrasing studies, including five faster challenges, with linked player lessons.',items:[
  'SRV: Shuffle and sting — long–short eighths, accented bends and an A7 major-third resolution.',
  'Hendrix: Chord-fragment conversation — triplet double-stops and a moving voice inside a chord.',
  'Page: The triplet engine — a repeating hammer-on/pull-off cell and a descending answer.',
  'Clapton: Repeat, then resolve — a straight sixteenth-note figure and blues-to-major-third movement.',
  'Moore: Sustain, burst, resolve — wide delayed vibrato, silence, a faster run and slide resolution.',
+ 'Five additional fast studies at 112–140 BPM: Texas quick-step, Double-stop sprint, Triplet cascade, Cross-string turnaround and High-wire burst, with 60%, 75% and full-speed practice.',
  'Three adapted public-domain motifs with credits, linked artist lessons and free publisher sources for actual song excerpts.',
  'Readable beat panels on phones; synchronized highlighting, count-in, slower playback, loop gaps, appropriate A7/A-minor backing, tone and WAV downloads.'
 
@@ -84,6 +85,7 @@ const FEATURE_CATALOGUE=[
  ]}
 ];
 const RELEASE_HISTORY=[
+ {version:9,date:'2026-10-26',label:'26 October 2026',title:'Five faster Legends studies',changes:['Added one original faster study for each legend: SRV, Hendrix, Page, Clapton and Moore, at 112–140 BPM.','Added fast shuffle, double-stop fills, cascading triplets, cross-string sixteenths and high-register bursts, with tabs and technique tips.','Reused pitch-preserving practice speeds, count-ins, loop gaps, A7/A-minor backing and WAV downloads for all ten studies.']},
  {version:8,date:'2026-10-14',label:'14 October 2026',title:'Multisampled instruments & arranged backing tracks',changes:['Replaced the small General MIDI bank with 150 compact CC0 guitar, bass and acoustic-drum samples.','Added soft/hard note layers, alternate takes, guitar string-release sounds and stronger lead/crunch processing.','Added four original backing arrangements: After midnight, Dusty road shuffle, Open road and Pocket conversation.','Added continuous, synchronized guitar/bass/drum stems, live instrument levels, count-ins, track downloads and chord-following note guides.','Preserved transposable loops and upgraded their drums to the sampled acoustic kit.','Added reproducible sample-preparation and backing-render scripts, source provenance and retained CC0 licenses.']},
  {version:7,date:'2026-10-14',label:'14 October 2026',title:'Phone practice & distinct Legends phrasing',changes:['Added a persistent Stop button and audio status in every section, plus audio priming on the original tap.','Lick loops now schedule against the audio clock; highlights also follow audio time.','Changed phone tabs to readable beat panels and improved touch targets, safe-area spacing and active navigation visibility.','Reworked all five Legends studies with shuffle, triplets, double-stops, sixteenth-note cells and expressive bends/slides.','Credited three public-domain motifs and linked player lessons and actual song-tab sources.','Matched A7 or A-minor backing to each study and preserved export settings while WAV audio renders.']},
  {version:6,date:'2026-10-12',label:'12 October 2026',title:'Release list & complete feature catalogue',changes:['Added this Release list to navigation and the footer.','Documented all eight learning sections, the shared sound engine, navigation and optional assistant scale setup.','Added links from the catalogue to each learning section and recorded the earlier releases.']},

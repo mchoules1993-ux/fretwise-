@@ -1,4 +1,4 @@
-Fretwise Legends — source notes, 14 October 2026
+Fretwise Legends — source notes, updated 26 October 2026
 
 Embedded practice phrases are technique studies, not song transcriptions.
 
@@ -33,3 +33,10 @@ Further Up on the Road and Still Got the Blues.
 The publisher describes free access but does not identify an open-source license.
 
 Playback uses the existing FluidR3 samples; see assets/audio/CREDITS.txt.
+
+Five faster studies added 26 October 2026:
+Texas quick-step (SRV), Double-stop sprint (Hendrix), Triplet cascade (Page),
+Cross-string turnaround (Clapton) and High-wire burst (Moore) are newly composed
+Fretwise technique exercises, not artist recordings or song transcriptions.
+They do not reuse the public-domain motifs credited for the foundation studies.
+The linked player lessons and song-study sources remain separate resources.
