@@ -52,9 +52,10 @@ merged the last PR yet, remind them before starting anything new.
 # Run the site locally, then open http://localhost:8000
 python3 -m http.server 8000 --directory site
 
-# Tests (both must pass)
+# Tests (all must pass)
 node tests/audio-regression.cjs
 python3 tests/validate_audio_assets.py
+node tests/chord-shapes.cjs
 ```
 
 ## Publishing the live site
@@ -71,6 +72,7 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
+- 2026-10-27 · Claude · Added chord shape diagrams (finger numbers, open/muted strings, barres) to Chord progressions, Harmony and the Jam room; new test `tests/chord-shapes.cjs` checks all 12 roots × 6 chord types. · mchoules1993-ux/fretwise-#7 · merged, not yet published
 - 2026-10-26 · ChatGPT · Published `main` commit `d705637350a8a58de0776b8ecb01156122f65a92` to the existing Fretwise Site as version 11, using the exact contents of `site/`. Both regression checks passed. · published
 - 2026-10-26 · ChatGPT · Published `main` commit `203bcfc8e1884e558bf8bf085b10782acba8e53d` to the existing Fretwise Site as version 10, using the exact contents of `site/`. Both regression checks passed. · published
 - 2026-10-24 · ChatGPT · Published `main` commit `6a1135ffac327ccceaf80fe7e48a4f108d1ada3a` to the existing Fretwise Site as version 9, using the exact contents of `site/`. Both regression checks passed. · published
