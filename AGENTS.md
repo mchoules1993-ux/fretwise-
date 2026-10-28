@@ -72,8 +72,9 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
-- 2026-10-28 · Claude · Jam room now names notes from the current chord and scale, so A7 shows C♯ (not D♭) on the fretboard and in “land on”. Added a check to `tests/audio-regression.cjs`. · mchoules1993-ux/fretwise-#8 · open
-- 2026-10-27 · Claude · Added chord shape diagrams (finger numbers, open/muted strings, barres) to Chord progressions, Harmony and the Jam room; new test `tests/chord-shapes.cjs` checks all 12 roots × 6 chord types. · mchoules1993-ux/fretwise-#7 · merged, not yet published
+- 2026-10-28 · ChatGPT · Published `main` commit `ee3a9b3883057872ed200c6ed3f7a1f06d6ff1ed` to Fretwise as version 12; all three checks passed. · published
+- 2026-10-28 · Claude · Jam room now names notes from the current chord and scale, so A7 shows C♯ (not D♭) on the fretboard and in “land on”. Added a check to `tests/audio-regression.cjs`. · mchoules1993-ux/fretwise-#8 · merged and published
+- 2026-10-27 · Claude · Added chord shape diagrams (finger numbers, open/muted strings, barres) to Chord progressions, Harmony and the Jam room; new test `tests/chord-shapes.cjs` checks all 12 roots × 6 chord types. · mchoules1993-ux/fretwise-#7 · merged and published
 - 2026-10-26 · ChatGPT · Published `main` commit `d705637350a8a58de0776b8ecb01156122f65a92` to the existing Fretwise Site as version 11, using the exact contents of `site/`. Both regression checks passed. · published
 - 2026-10-26 · ChatGPT · Published `main` commit `203bcfc8e1884e558bf8bf085b10782acba8e53d` to the existing Fretwise Site as version 10, using the exact contents of `site/`. Both regression checks passed. · published
 - 2026-10-24 · ChatGPT · Published `main` commit `6a1135ffac327ccceaf80fe7e48a4f108d1ada3a` to the existing Fretwise Site as version 9, using the exact contents of `site/`. Both regression checks passed. · published
