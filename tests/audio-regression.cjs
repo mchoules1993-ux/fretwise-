@@ -69,6 +69,13 @@ const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)awai
  // The live guide must distinguish minor-seventh and dominant-seventh harmony.
  assert.equal(run("state.jamMode='studio';state.studioTrack=0;state.root=9;state.jamScale='follow';jamTheory(0).scaleKey"),'dorian');
  assert.equal(run('jamTheory(6).scaleKey'),'mixolydian');
+ // Note names follow the current chord: A7's third is C♯, not D♭.
+ run("state.studioTrack=1;updateJamUI(0)");
+ assert.equal(element('jam-scale-name').textContent,'Suggested notes: A Mixolydian · land on A, C♯, E, G');
+ assert.equal(run('jamNoteNamer(jamTheory(0),progName(activeJamProgression(),0))(1)'),'C♯');
+ run("state.jamScale='minorPent';updateJamUI(0)");
+ assert.match(element('jam-scale-name').textContent,/land on A, C♯, E, G$/);
+ run("state.jamScale='follow'");
  // Each player has a genuinely new faster phrase; the shared player must schedule
  // every fast study at its own tempo and at both slower practice speeds.
  const fastStudies=JSON.parse(run('JSON.stringify(LEGEND_LICKS.slice(5))'));
