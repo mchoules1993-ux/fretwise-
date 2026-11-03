@@ -34,7 +34,7 @@
 - [x] Run `node tests/listen.cjs`; confirm the new cases fail for the reproduced lifecycle bug.
 - [x] Implement ownership, cleanup and the pending Cancel label in `site/listen.js`.
 - [x] Run all five checks from AGENTS.md and browser checks, including microphone controls in Chromium with a synthetic input device.
-- [ ] Review the complete diff, record the handoff, commit, fetch main again, push and open a conflict-free PR.
+- [x] Review the complete diff, record the handoff, commit, fetch main again, push and open a PR.
 
 ## Execution record
 
@@ -44,3 +44,4 @@
 - RED: 15 of 21 lifecycle cases failed against the original implementation; GREEN: all 21 passed after the fix, alongside existing pitch/judge checks.
 - All five required checks passed. Chromium navigation passed at 1280×600, 390×844, 844×390, 640×400 and 320×568. A separate Chromium smoke test using native AudioContext and synthetic microphone tracks verified cancellation, stale grants, retry, track cleanup and navigation at 1280px and 390px; no browser errors.
 - Independent read-only review found no actionable issues; real-device microphone accuracy and Safari permission UI were outside this validation.
+- Opened PR #18 from `fix/listening-lifecycle` against unchanged main `d2879da`. Owner merge and publication remain separate steps.
