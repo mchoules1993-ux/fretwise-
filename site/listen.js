@@ -63,7 +63,7 @@ function createListenJudge(targetPc,{ignorePc=null,tuning=LISTEN_TUNING}={}){
  };
 }
 
-const listen={active:false,starting:false,ctx:null,stream:null,analyser:null,buffer:null,frame:0,lastAnalysis:0,
+const listen={active:false,starting:false,session:null,ctx:null,stream:null,analyser:null,buffer:null,frame:0,lastAnalysis:0,
  target:0,spot:0,judge:null,missed:false,resolvedAt:0,pausedUntil:0,hits:0,firstTry:0,message:'Tap Start listening, then allow the microphone.',heard:'—',level:0,mood:''};
 
 function listenPick(previousPc=null){
@@ -95,7 +95,7 @@ function listenView(){
 <div class="listen-board-wrap" id="listen-board">${listenFretboard(spot)}</div>
 <div class="listen-readout"><div><span class="eyebrow">HEARD</span><strong id="listen-heard">${listen.heard}</strong></div><div class="listen-meter" aria-hidden="true"><i id="listen-level" style="width:${Math.round(listen.level*100)}%"></i></div></div>
 <p class="listen-message" id="listen-message" role="status">${listen.message}</p>
-<div class="lick-actions"><button class="btn primary" id="listen-toggle">${listen.active?'■ Stop listening':'● Start listening'}</button><button class="btn" id="listen-hear">♪ Hear the note</button><button class="btn" id="listen-next">Next note →</button></div>
+<div class="lick-actions"><button class="btn primary" id="listen-toggle">${listen.active?'■ Stop listening':listen.starting?'Cancel microphone request':'● Start listening'}</button><button class="btn" id="listen-hear">♪ Hear the note</button><button class="btn" id="listen-next">Next note →</button></div>
 <p class="tiny" id="listen-tally">${listenTally()}</p></section>
 <section class="panel practice"><span class="eyebrow">SET UP FOR A FAIR TEST</span><h2>Help your phone hear the amp.</h2><ol><li>Wear headphones for Fretwise’s sound, so the microphone only hears your guitar.</li><li>Put the phone 30–50 cm from the amp speaker.</li><li>Use a clean tone: no distortion, delay or reverb.</li><li>Play one string at a time and let the note ring for a second.</li></ol><p class="tiny">If Fretwise can’t hear a clear note, it says so. Unclear sound is never marked wrong. Sound is analysed on your device and is not recorded or uploaded.</p></section>`;
 }
@@ -132,37 +132,54 @@ function listenTick(){
  else if(listen.mood!=='miss')listenSay('Listening… play the note and let it ring.','');
 }
 
+// A pending permission prompt can outlive Stop and a later Start. Each attempt
+// owns its resources so late results can only release their own microphone.
+function releaseListenSession(session){
+ if(!session)return;
+ session.stream?.getTracks().forEach(t=>t.stop());session.stream=null;
+ try{session.ctx?.close()?.catch(()=>{})}catch{}
+ session.ctx=null;
+}
+
 async function startListening(){
  if(listen.active||listen.starting)return;
  if(!window.isSecureContext){listenSay('The microphone only works on a secure (https) page. Open the live Fretwise site to try this.','unclear');return;}
  const C=window.AudioContext||window.webkitAudioContext;
  if(!navigator.mediaDevices?.getUserMedia||!C){listenSay('This browser can’t use the microphone. Try an up-to-date Safari or Chrome.','unclear');return;}
- listen.starting=true;listenSay('Waiting for microphone permission…','');
- // Create and resume the context inside the tap, before waiting for permission (needed on iPhone).
- const ctx=new C(),resume=ctx.resume();
+ const session={ctx:null,stream:null};listen.session=session;
+ listen.starting=true;listenSet('listen-toggle','Cancel microphone request');listenSay('Waiting for microphone permission…','');
  try{
+  // Create and resume the context inside the tap (needed on iPhone). Observe
+  // resume and permission together so either failure cleans up immediately.
+  const ctx=session.ctx=new C();
   // Phone voice processing (echo and noise removal, automatic volume) damages guitar notes, so switch it off.
-  const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
-  await resume;
-  if(!listen.starting||state.view!=='listen'){stream.getTracks().forEach(t=>t.stop());ctx.close();return;}
+  await Promise.all([ctx.resume(),(async()=>{
+   session.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+   // Release late tracks even if the cancelled context never finishes resuming.
+   if(listen.session!==session)releaseListenSession(session);
+  })()]);
+  if(listen.session!==session)return;
+  if(state.view!=='listen'||document.hidden){stopListening();return;}
+  const stream=session.stream;
   const analyser=ctx.createAnalyser();analyser.fftSize=2048;ctx.createMediaStreamSource(stream).connect(analyser);
   Object.assign(listen,{active:true,starting:false,ctx,stream,analyser,buffer:new Float32Array(analyser.fftSize),lastAnalysis:0});
   listen.judge=createListenJudge(LISTEN_TARGETS[listen.target].pc);
   listenSet('listen-toggle','■ Stop listening');listenSay('Listening… play the note and let it ring.','');
   listenTick();
  }catch(error){
-  listen.starting=false;ctx.close();
+  releaseListenSession(session);
+  if(listen.session!==session)return;
+  stopListening();
   const blocked=error&&(error.name==='NotAllowedError'||error.name==='SecurityError');
   listenSay(blocked?'Microphone access was blocked. Allow it for this site in your browser settings, then tap Start listening again.':error&&error.name==='NotFoundError'?'No microphone was found.':'The microphone could not start. Close other apps using it and try again.','unclear');
  }
 }
 
 function stopListening(){
- listen.starting=false;
- if(!listen.active&&!listen.stream)return;
+ if(!listen.active&&!listen.starting&&!listen.session)return;
+ const session=listen.session;listen.session=null;listen.starting=false;
  cancelAnimationFrame(listen.frame);
- listen.stream?.getTracks().forEach(t=>t.stop());
- try{listen.ctx?.close()}catch{}
+ releaseListenSession(session);
  Object.assign(listen,{active:false,ctx:null,stream:null,analyser:null,buffer:null,level:0});
  listenSet('listen-toggle','● Start listening');
  const meter=document.getElementById('listen-level');if(meter)meter.style.width='0%';

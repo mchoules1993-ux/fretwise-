@@ -63,3 +63,125 @@ assert.equal(feed(judgeFor(9),repeat(quiet,10)).result,'waiting');
 // A new target is never the same note twice in a row.
 for(let i=0;i<30;i++){const before=targets[run('listen.target')].pc;run(`listenPick(${before})`);assert.notEqual(targets[run('listen.target')].pc,before);}
 console.log('Listening checks passed: 74 pitch tests, judge rules and the practice page.');
+
+// Exercise the real startup/stop code with controllable permission and audio APIs.
+// No hardware or browser permission prompt is available in Node.
+const {test}=require('node:test');
+function deferred(){let resolve,reject;const promise=new Promise((yes,no)=>{resolve=yes;reject=no});return {promise,resolve,reject};}
+const flush=()=>new Promise(resolve=>setImmediate(resolve));
+function microphone(){const tracks=[{readyState:'live',stop(){this.readyState='ended'}}];return {getTracks:()=>tracks};}
+function listeningBrowser(){
+ const requests=[],contexts=[],frames=new Set(),events={},elements=new Map();
+ const faults={constructor:false,resume:false,graph:false,close:false};
+ let frameId=0;
+ class AudioContext{
+  constructor(){if(faults.constructor)throw new Error('Context unavailable');this.state='suspended';this.resumed=deferred();this.sampleRate=48000;contexts.push(this);}
+  resume(){if(faults.resume)throw new Error('Resume failed');return this.resumed.promise;}
+  close(){this.state='closed';return faults.close?Promise.reject(new Error('Close failed')):Promise.resolve();}
+  createAnalyser(){if(faults.graph)throw new Error('Graph failed');return {fftSize:2048,getFloatTimeDomainData(buf){buf.fill(0)}};}
+  createMediaStreamSource(){return {connect(){}};}
+ }
+ const document={hidden:false,addEventListener(name,fn){events[name]=fn},getElementById(id){if(!elements.has(id))elements.set(id,{textContent:'',style:{}});return elements.get(id)}};
+ const context=vm.createContext({window:{isSecureContext:true,AudioContext,addEventListener(name,fn){events[name]=fn}},document,
+  navigator:{mediaDevices:{getUserMedia(){const request=deferred();requests.push(request);return request.promise}}},
+  state:{view:'listen'},intro:()=>'',performance:{now:()=>100},
+  requestAnimationFrame(){frames.add(++frameId);return frameId},cancelAnimationFrame(id){frames.delete(id)}});
+ vm.runInContext(fs.readFileSync('site/listen.js','utf8'),context);
+ const run=code=>vm.runInContext(code,context);
+ return {run,requests,contexts,frames,events,document,faults,start:()=>run('startListening()'),stop:()=>run('stopListening()'),
+  grant(i,stream=microphone()){contexts[i].resumed.resolve();requests[i].resolve(stream);return stream;},
+  text:id=>document.getElementById(id).textContent};
+}
+const isStopped=stream=>stream.getTracks().every(track=>track.readyState==='ended');
+
+test('successful listening stops tracks, context and animation on Stop',async()=>{
+ const b=listeningBrowser(),started=b.start(),stream=b.grant(0);await started;
+ assert.equal(b.run('listen.active'),true);assert.equal(b.frames.size,1);assert.equal(isStopped(stream),false);
+ b.stop();assert.equal(isStopped(stream),true);assert.equal(b.contexts[0].state,'closed');assert.equal(b.frames.size,0);
+ assert.equal(b.run('listen.active || listen.starting'),false);assert.match(b.text('listen-toggle'),/Start listening/);
+});
+
+test('pending permission offers Cancel and Stop closes its context immediately',async()=>{
+ const b=listeningBrowser(),started=b.start();
+ assert.match(b.text('listen-toggle'),/Cancel/);assert.match(b.run('listenView()'),/>[^<]*Cancel[^<]*<\/button>/);
+ b.stop();assert.equal(b.contexts[0].state,'closed');assert.match(b.text('listen-message'),/Stopped/);
+ const stream=b.grant(0);await started;
+ assert.equal(isStopped(stream),true);assert.equal(b.run('listen.active'),false);assert.equal(b.frames.size,0);
+});
+
+for(const order of ['old-first','new-first'])test(`cancelled request cannot replace the new listener (${order})`,async()=>{
+ const b=listeningBrowser(),old=b.start();b.stop();const current=b.start();let stale,live;
+ if(order==='old-first'){
+  stale=b.grant(0);await old;assert.equal(b.run('listen.active'),false);assert.equal(b.run('listen.starting'),true);
+  live=b.grant(1);await current;
+ }else{live=b.grant(1);await current;stale=b.grant(0);await old;}
+ assert.equal(isStopped(stale),true);assert.equal(isStopped(live),false);assert.equal(b.run('listen.active'),true);
+ assert.equal(b.frames.size,1);b.stop();assert.equal(isStopped(live),true);assert.equal(b.frames.size,0);
+});
+
+for(const active of [false,true])test(`old permission rejection leaves the newer ${active?'active':'pending'} attempt alone`,async()=>{
+ const b=listeningBrowser(),old=b.start();b.stop();const current=b.start();let stream;
+ if(active){stream=b.grant(1);await current;}
+ const message=b.text('listen-message');b.requests[0].reject({name:'NotAllowedError'});await old;
+ assert.equal(b.text('listen-message'),message);assert.equal(b.run('listen.starting'),!active);assert.equal(b.run('listen.active'),active);
+ if(!active){stream=b.grant(1);await current;}
+ assert.equal(isStopped(stream),false);b.stop();assert.equal(isStopped(stream),true);
+});
+
+test('Stop releases granted tracks while audio resume is still pending',async()=>{
+ const b=listeningBrowser(),started=b.start(),stream=microphone();b.requests[0].resolve(stream);await flush();
+ b.stop();assert.equal(isStopped(stream),true);assert.equal(b.contexts[0].state,'closed');
+ b.contexts[0].resumed.resolve();await started;assert.equal(b.run('listen.active'),false);
+});
+
+test('late permission releases tracks without waiting for a cancelled audio resume',async()=>{
+ const b=listeningBrowser(),started=b.start();b.stop();const stream=microphone();b.requests[0].resolve(stream);await flush();
+ assert.equal(isStopped(stream),true);assert.equal(b.run('listen.active'),false);
+ b.contexts[0].resumed.resolve();await started;
+});
+
+for(const granted of [false,true])test(`resume rejection cleans up with permission ${granted?'granted':'pending'}`,async()=>{
+ const b=listeningBrowser(),started=b.start(),stream=microphone();
+ if(granted){b.requests[0].resolve(stream);await flush();}
+ b.contexts[0].resumed.reject(new Error('Resume failed'));await flush();
+ assert.equal(b.run('listen.starting'),false);assert.equal(b.contexts[0].state,'closed');
+ if(!granted){b.requests[0].resolve(stream);await flush();}
+ await started;assert.equal(isStopped(stream),true);assert.equal(b.run('listen.active'),false);
+});
+
+for(const fault of ['constructor','resume','graph'])test(`${fault} failure releases resources and permits retry`,async()=>{
+ const b=listeningBrowser();b.faults[fault]=true;const failed=b.start();let stream;
+ if(fault==='graph')stream=b.grant(0);
+ await failed;assert.equal(b.run('listen.starting || listen.active'),false);
+ assert.match(b.text('listen-message'),/could not start/);assert.match(b.text('listen-toggle'),/Start listening/);
+ assert.ok(b.contexts.every(ctx=>ctx.state==='closed'));if(stream)assert.equal(isStopped(stream),true);
+ b.faults[fault]=false;const next=b.contexts.length,started=b.start();
+ b.contexts[next].resumed.resolve();const live=microphone();b.requests.at(-1).resolve(live);await started;
+ assert.equal(b.run('listen.active'),true);b.stop();assert.equal(isStopped(live),true);
+});
+
+for(const [name,message] of [['NotAllowedError',/blocked/],['NotFoundError',/No microphone/]])test(`${name} reports a useful message and allows retry`,async()=>{
+ const b=listeningBrowser(),failed=b.start();b.contexts[0].resumed.resolve();b.requests[0].reject({name});await failed;
+ assert.match(b.text('listen-message'),message);assert.equal(b.run('listen.starting'),false);assert.equal(b.contexts[0].state,'closed');
+ const retry=b.start(),stream=b.grant(1);await retry;assert.equal(b.run('listen.active'),true);b.stop();assert.equal(isStopped(stream),true);
+});
+
+for(const event of ['pagehide','visibilitychange'])for(const active of [false,true])test(`${event} cancels ${active?'active':'pending'} listening`,async()=>{
+ const b=listeningBrowser(),started=b.start();let stream;
+ if(active){stream=b.grant(0);await started;}
+ b.document.hidden=true;b.events[event]();
+ assert.equal(b.contexts[0].state,'closed');assert.equal(b.run('listen.active || listen.starting'),false);
+ if(!active){stream=b.grant(0);await started;}
+ assert.equal(isStopped(stream),true);assert.equal(b.frames.size,0);
+});
+
+test('leaving the listening page before permission completes releases resources',async()=>{
+ const b=listeningBrowser(),started=b.start();b.run("state.view='home'");const stream=b.grant(0);await started;
+ assert.equal(isStopped(stream),true);assert.equal(b.run('listen.active || listen.starting'),false);assert.equal(b.frames.size,0);
+});
+
+test('repeated Start taps share one attempt and cleanup tolerates close rejection',async()=>{
+ const b=listeningBrowser(),started=b.start();await b.start();assert.equal(b.requests.length,1);
+ const stream=b.grant(0);await started;await b.start();assert.equal(b.requests.length,1);
+ b.faults.close=true;b.stop();await flush();assert.equal(isStopped(stream),true);assert.equal(b.frames.size,0);
+});
