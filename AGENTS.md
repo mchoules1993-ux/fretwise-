@@ -74,6 +74,7 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
+- 2026-11-03 · Claude · Arranged backing tracks: light loop-safe room reverb on every stem, and a simple delta-style turnaround (root drone, upper note stepping ♭7–6–♭6–5) in the last I-chord bar of After midnight, Dusty road shuffle and Open road. Same instruments, keys, tempos and lengths; funk vamp unchanged apart from the reverb. Owner approved by ear in a listening test first. · mchoules1993-ux/fretwise-#17 · open
 - 2026-11-03 · ChatGPT · Published `main` commit `2479cd95475cf19f853c8d233396bff2951a1ce1` to Fretwise as version 14; all five regression checks passed. · published
 - 2026-11-03 · ChatGPT · Added a section-card homepage, scrolling desktop menu and phone Sections panel with keyboard focus and browser history; includes navigation regressions. · mchoules1993-ux/fretwise-#13 · merged and published
 
