@@ -73,6 +73,7 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
+- 2026-11-03 · ChatGPT · Published `main` commit `99b61ab14c33da2120895b7c0cdb9c315f80d71b` to Fretwise as version 13; all four regression checks passed. · published
 - 2026-11-03 · Owner · Published `main` commit `38307bea96aa39ae2966552af3a54e69a304d293` (includes “Fretwise listens”) to the live site. Recorded by Claude from the owner’s report. · published
 - 2026-11-03 · Claude · Added “Fretwise listens” (section 09, a trial): asks for A, C or E, listens through the microphone, shows the note heard and confirms a match; says when it can’t hear clearly instead of marking wrong. New test `tests/listen.cjs`. · mchoules1993-ux/fretwise-#10 · merged and published
 - 2026-10-28 · ChatGPT · Published `main` commit `ee3a9b3883057872ed200c6ed3f7a1f06d6ff1ed` to Fretwise as version 12; all three checks passed. · published
