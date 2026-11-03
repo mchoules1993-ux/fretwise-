@@ -48,11 +48,11 @@
 - [x] Update the feature catalogue and README to describe the implemented navigation; record the task and PR status in AGENTS.md without claiming it is merged or published.
 - [x] Run `node tests/audio-regression.cjs`, `python3 tests/validate_audio_assets.py`, `node tests/chord-shapes.cjs`, `node tests/listen.cjs`, and `node tests/navigation.cjs`; inspect all results.
 - [x] Review the full diff against the spec, especially focus behavior, short-screen overflow, history and microphone cleanup. Run syntax and whitespace checks.
-- [ ] Refresh main before pushing. Resolve any changes and repeat affected checks. Commit and push the feature branch; open a PR with behavior, validation and any browser-verification limit. Leave merging and publication to the owner's requested workflow.
+- [x] Refresh main before pushing. Resolve any changes and repeat affected checks. Commit and push the feature branch; open a PR with behavior, validation and any browser-verification limit. Leave merging and publication to the owner's requested workflow.
 
 ## Self-review
 Both selected design elements are covered by Task 1. Each review-focus condition has an explicit behavior or viewport check. The four existing test commands include the new listening module. No audio asset rebuild, dependency installation, lesson rewrite or live deployment is required.
 
 ## Execution evidence
 
-All four existing regression checks plus `tests/navigation.cjs` pass. Chromium navigation checks pass at 1280×600, 390×844, 844×390, 640×400 and 320×568. Independent review found a skip-link routing regression; the browser test reproduced it before the fix and passed afterward. Source transport uses the GitHub connector because shell Git cannot reach its proxy. The isolated clone preserves the original checkout. PR creation is the remaining handoff step.
+All four existing regression checks plus `tests/navigation.cjs` pass. Chromium navigation checks pass at 1280×600, 390×844, 844×390, 640×400 and 320×568. Independent review found a skip-link routing regression; the browser test reproduced it before the fix and passed afterward. Source transport uses the GitHub connector because shell Git cannot reach its proxy. The isolated clone preserves the original checkout. PR #13 was merged by the owner; publication remains separate.

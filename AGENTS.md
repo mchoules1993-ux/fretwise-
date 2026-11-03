@@ -74,7 +74,7 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
-- 2026-11-03 · ChatGPT · Added a section-card homepage, scrolling desktop menu and phone Sections panel with keyboard focus and browser history; includes navigation regressions. · feat/navigation-home · open (PR pending)
+- 2026-11-03 · ChatGPT · Added a section-card homepage, scrolling desktop menu and phone Sections panel with keyboard focus and browser history; includes navigation regressions. · mchoules1993-ux/fretwise-#13 · merged, not yet published
 
 - 2026-11-03 · ChatGPT · Published `main` commit `99b61ab14c33da2120895b7c0cdb9c315f80d71b` to Fretwise as version 13; all four regression checks passed. · published
 - 2026-11-03 · Owner · Published `main` commit `38307bea96aa39ae2966552af3a54e69a304d293` (includes “Fretwise listens”) to the live site. Recorded by Claude from the owner’s report. · published
