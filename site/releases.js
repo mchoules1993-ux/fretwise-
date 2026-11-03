@@ -65,6 +65,13 @@ const FEATURE_CATALOGUE=[
  'Readable beat panels on phones; synchronized highlighting, count-in, slower playback, loop gaps, appropriate A7/A-minor backing, tone and WAV downloads.'
 
  ]},
+ {view:'listen',title:'Fretwise listens',description:'Trial: play a note and the app hears it.',items:[
+ 'Asks for A, C or E and shows where to play it on a small fretboard; any octave counts.',
+ 'Listens through the microphone with phone voice processing switched off, and shows the note it heard and how in tune it is.',
+ 'Confirms a match once the note is held; says when it can’t hear clearly instead of marking you wrong.',
+ 'Hear the target note through headphones, skip to a new note, and see how many you matched first time.',
+ 'Sound is analysed on your device only. Nothing is recorded or uploaded.'
+ ]},
  {title:'Sound engine',description:'The audio tools used across the studio.',items:[
  '150 bundled CC0 samples: 82 guitar, 36 bass and 32 drum samples. Instrument banks load separately; sound credits and source licenses are retained.',
  'Amp and cabinet EQ, warm-crunch drive, compression, sustain and delay for expressive lick playback.',

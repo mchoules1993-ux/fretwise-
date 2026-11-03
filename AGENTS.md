@@ -56,6 +56,7 @@ python3 -m http.server 8000 --directory site
 node tests/audio-regression.cjs
 python3 tests/validate_audio_assets.py
 node tests/chord-shapes.cjs
+node tests/listen.cjs
 ```
 
 ## Publishing the live site
@@ -72,6 +73,7 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
+- 2026-11-03 · Claude · Added “Fretwise listens” (section 09, a trial): asks for A, C or E, listens through the microphone, shows the note heard and confirms a match; says when it can’t hear clearly instead of marking wrong. New test `tests/listen.cjs`. · PR pending · open
 - 2026-10-28 · ChatGPT · Published `main` commit `ee3a9b3883057872ed200c6ed3f7a1f06d6ff1ed` to Fretwise as version 12; all three checks passed. · published
 - 2026-10-28 · Claude · Jam room now names notes from the current chord and scale, so A7 shows C♯ (not D♭) on the fretboard and in “land on”. Added a check to `tests/audio-regression.cjs`. · mchoules1993-ux/fretwise-#8 · merged and published
 - 2026-10-27 · Claude · Added chord shape diagrams (finger numbers, open/muted strings, barres) to Chord progressions, Harmony and the Jam room; new test `tests/chord-shapes.cjs` checks all 12 roots × 6 chord types. · mchoules1993-ux/fretwise-#7 · merged and published
