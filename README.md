@@ -17,6 +17,7 @@ Fretwise is an interactive guitar theory studio for learning scales, modes, harm
 - Rhythm & Beats: 4/4 note values, counting, rests, five playable patterns and tap practice with timing feedback
 - Legends: ten distinct phrasing studies (five foundations and five faster studies at 112–140 BPM) for SRV, Hendrix, Page, Clapton and Moore, including three adapted public-domain motifs, song-study links, shuffle/triplet/sixteenth timing, and appropriate backing
 - Four original arranged backing tracks with synchronized guitar/bass/drum stems, live mixer, count-in, MP3 downloads and chord-following note guides
+- Home: cards for every section; vertically scrolling desktop sidebar and a Sections side panel for phones and narrow windows, with keyboard focus handling and browser Back/Forward
 - Release list: complete implemented-feature catalogue, section links and release history
 - Persistent audio Stop/status, audio-clock lick loops, readable phone beat panels, responsive layouts, keyboard access and optional browser-assistant scale setup
 
@@ -52,3 +53,15 @@ All newly bundled sample libraries are CC0; source licenses are retained alongsi
 The bass library uses transposing key labels; preparation maps its B1-labelled sample
 (which sounds at approximately 31 Hz) to MIDI 23, B0.
 Arranged backings have fixed key/tempo; transposable loops remain available separately.
+
+## Navigation checks
+
+```bash
+node tests/navigation.cjs
+```
+
+Optional browser checks require the development-only Python Playwright package and Chromium (set `CHROMIUM_PATH` if needed). They start a temporary localhost server and cover all section cards, browser history, short windows, phone layouts, menu scrolling, keyboard dismissal and focus:
+
+```bash
+python3 tests/navigation-browser.py
+```

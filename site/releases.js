@@ -80,8 +80,8 @@ const FEATURE_CATALOGUE=[
  'Audio starts after a user action and stops when changing sections, hiding the page or leaving it.'
  ]},
  {title:'Navigation & access',description:'Features that make the studio usable on different devices.',items:[
- 'Responsive layouts, horizontal lesson navigation on phones, and scrollable wide fretboards and tabs.',
- 'Direct section links, a current-section breadcrumb and highlighted navigation.',
+ 'Homepage cards for all ten sections, an independently scrolling desktop sidebar and a Sections side panel on phones and narrow windows.',
+ 'Direct section links, browser Back/Forward, a current-section breadcrumb and highlighted navigation. The phone menu supports Escape, keyboard focus and touch dismissal.',
  'Skip-to-lesson link, visible keyboard focus, accessible diagram labels and playback status announcements.',
  'Reduced-motion support and text note lists alongside visual tabs.',
  'Sound credits and theory references open from the site; the Release list is available from navigation and the footer.'
