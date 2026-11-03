@@ -1,5 +1,6 @@
 """Render four original backing arrangements from Fretwise's compact CC0 samples.
 Each instrument is a separate, exactly aligned loop; tails wrap into the next cycle.
+Blues tracks end with a simple delta-style turnaround; every stem gets a light, loop-safe room reverb.
 """
 import argparse,json,math,subprocess,wave
 from pathlib import Path
@@ -12,6 +13,16 @@ TRACKS=[
  dict(id='texas-shuffle',name='Dusty road shuffle',style='Texas shuffle',root=9,key='A blues',bpm=86,scale='mixolydian',seq=[[0,'7'],[5,'7'],[0,'7'],[0,'7'],[5,'7'],[5,'7'],[0,'7'],[0,'7'],[7,'7'],[5,'7'],[0,'7'],[7,'7']],nums=['I7','IV7','I7','I7','IV7','IV7','I7','I7','V7','IV7','I7','V7'],description='Long–short rhythm guitar, a walking bass line and shuffle drums.'),
  dict(id='blues-rock',name='Open road',style='Driving blues rock',root=4,key='E blues',bpm=104,scale='mixolydian',seq=[[0,'7'],[0,'7'],[0,'7'],[0,'7'],[5,'7'],[5,'7'],[0,'7'],[0,'7'],[7,'7'],[5,'7'],[0,'7'],[7,'7']],nums=['I7','I7','I7','I7','IV7','IV7','I7','I7','V7','IV7','I7','V7'],description='Crunchy boogie guitar, picked-feel bass accents and a driving backbeat.'),
  dict(id='clean-funk',name='Pocket conversation',style='Clean funk',root=9,key='A Dorian',bpm=100,scale='dorian',seq=[[0,'m7'],[5,'7'],[0,'m7'],[5,'7'],[0,'m7'],[5,'7'],[0,'m7'],[5,'7']],nums=['i7','IV7','i7','IV7','i7','IV7','i7','IV7'],description='Muted guitar stabs, syncopated bass, hi-hat accents and ghost notes.')]
+# Bar (0-based) that plays the turnaround. The funk vamp has no turnaround.
+TURNAROUNDS={'slow-minor':7,'texas-shuffle':10,'blues-rock':10}
+def circular_reverb(stem,seconds,decay,level,low=180,high=7000,seed=7):
+ """Small stereo room from decaying noise. Circular convolution wraps the tail into the loop start."""
+ n=round(seconds*RATE);t=np.arange(n)/RATE
+ ir=np.random.default_rng(seed).standard_normal((n,2))*np.exp(-t/decay)[:,None];ir[:round(.012*RATE)]=0
+ ir=sosfilt(butter(2,[low,high],btype='bandpass',fs=RATE,output='sos'),ir,axis=0);ir/=np.sqrt(np.sum(ir**2,axis=0))
+ padded=np.zeros_like(stem);padded[:n]=ir
+ wet=np.fft.irfft(np.fft.rfft(stem,axis=0)*np.fft.rfft(padded,axis=0),n=len(stem),axis=0)
+ return stem+level*wet.astype(np.float32)
 class Renderer:
  def __init__(self,cache,inventory,track):
   self.track=track;self.seconds=60/track['bpm'];self.frames=round(len(track['seq'])*4*self.seconds*RATE);self.stems={k:np.zeros((self.frames,2),np.float32)for k in ['guitar','bass','drums']};self.samples={};self.counter={};self.rng=np.random.default_rng(101+track['bpm'])
@@ -47,11 +58,25 @@ class Renderer:
   notes=[base+i for i in intervals]
   if reverse:notes.reverse()
   for i,m in enumerate(notes):self.add('guitar',m,beat+i*.018,length,velocity,volume,pan=-.25,muted=muted)
+ def turnaround(self,beat,root):
+  """Delta-style turnaround: the low root drones while the note above steps down b7, 6, b6, 5 (one per beat)."""
+  t=self.track;drone=40+(root-4)%12;low=24+root
+  for b,upper in enumerate([drone+10,drone+9,drone+8,drone+7]):
+   if t['id']=='slow-minor':self.add('guitar',drone,beat+b,1,80,.45,pan=-.25);self.add('guitar',upper,beat+b+.018,1,80,.45,pan=-.25)
+   else:
+    for extra,v in [(0,106),(2/3 if t['id']=='texas-shuffle'else .5,65)]:
+     for i,m in enumerate([drone,upper]):self.add('guitar',m,beat+b+extra+i*.018,.35 if t['id']=='texas-shuffle'else .38,v,.62,pan=-.3,muted=True)
+  # The bass simply holds the root under the line.
+  if t['id']=='slow-minor':
+   for b,v in [(0,85),(2,76)]:self.add('bass',low,beat+b,1.7,v,.65,pan=.05)
+  else:
+   for b in range(4):self.add('bass',low,beat+b,.8,92 if b%2==0 else 80,.75,pan=.04)
  def arrange(self):
   t=self.track
   for bar,(offset,q)in enumerate(t['seq']):
    beat=bar*4;root=(t['root']+offset)%12;low=24+root
-   if t['id']=='slow-minor':
+   if bar==TURNAROUNDS.get(t['id']):self.turnaround(beat,root)
+   elif t['id']=='slow-minor':
     self.chord(root,q,beat,2.7,78,.48);self.chord(root,q,beat+2.5,1.25,68,.32,reverse=True)
     for b,iv,length,v in [(0,0,1.7,85),(2,7,.7,76),(3,10 if q!='maj7'else 11,.45,65),(3.5,0,.4,70)]:self.add('bass',low+iv,beat+b,length,v,.65,pan=.05)
    elif t['id']in ['texas-shuffle','blues-rock']:
@@ -85,6 +110,9 @@ class Renderer:
   # Short stereo room and slap; circular shifts preserve seamless tails.
   guitar+=np.roll(guitar,round(.095*RATE),axis=0)*.11;self.stems['guitar']=guitar
   self.stems['bass']=sosfilt(butter(2,2200,fs=RATE,output='sos'),self.stems['bass'],axis=0)
+  # Light room: about half the first trial's level, with a shorter tail.
+  self.stems['drums']=circular_reverb(self.stems['drums'],1.4,.24,.17);self.stems['guitar']=circular_reverb(self.stems['guitar'],1.8,.32,.13)
+  self.stems['bass']=circular_reverb(self.stems['bass'],.8,.12,.03,low=120,high=1500)
   targets={'guitar':.13,'bass':.14,'drums':.12}
   for name,data in self.stems.items():
    rms=np.sqrt(np.mean(data**2));data*=targets[name]/max(rms,1e-6)
