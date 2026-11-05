@@ -31,7 +31,7 @@ main{max-width:1400px;margin:auto;padding:0 38px 25px;min-height:85vh}
 .intro{display:flex;justify-content:space-between;align-items:center;gap:25px;margin:0 0 34px;padding:30px 0 38px;background:var(--orange-deep);color:var(--cream);box-shadow:0 0 0 100vmax var(--orange-deep);clip-path:inset(0 -100vmax)}
 .intro h1{color:var(--cream)}
 .intro p{margin:0;max-width:690px;color:var(--cream);font-size:17px}
-.chapter{color:var(--cream)}
+.chapter{color:var(--orange-deep)}
 .intro .chapter{color:var(--cream)}
 .chapter-number{font-family:var(--display);font-size:84px;font-weight:700;line-height:1;color:#c76a43}
 /* Panels: plain (bordered) and faceplate (bordered with a hard shadow, for the page's main tool). */
@@ -96,6 +96,8 @@ main{max-width:1400px;margin:auto;padding:0 38px 25px;min-height:85vh}
 .practice .btn{margin-top:6px}
 .practice .tiny,.practice .field label,.practice .audio-note,.practice .lick-note-list,.practice .rhythm-basics p{color:var(--cream-dim)}
 .practice .check{color:var(--cream)!important}
+.practice .insight{border-top-color:#3d3127}
+.practice .insight strong{color:var(--cream)}
 .practice a,.practice .text-link,.practice .rhythm-basics strong{color:var(--gold)}
 .practice .badge{border-color:var(--cream-dim);color:var(--cream)}
 .practice .controls{border-bottom-color:#3d3127}
