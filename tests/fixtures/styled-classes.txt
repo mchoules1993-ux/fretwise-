@@ -6,7 +6,6 @@ bar-number
 barre
 beat-tile
 brand
-brand-dot
 brand-icon
 btn
 callout
@@ -46,7 +45,6 @@ header-end
 hint
 home-card
 home-card-icon
-home-card-open
 home-card-top
 home-grid
 home-group

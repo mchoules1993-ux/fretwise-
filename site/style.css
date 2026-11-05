@@ -161,12 +161,12 @@ footer{max-width:1400px;margin:auto;padding:22px 38px 28px;color:var(--ink-soft)
 .fb-inlay{fill:#7c4f2e}
 .fb-string-name{fill:var(--ink-soft)}
 .fb-string{stroke:var(--cream)}
-.fretboard .note circle{fill:var(--cream);stroke:var(--ink);stroke-width:1.5}
-.fretboard .note text{fill:var(--ink)}
-.fretboard .note.root circle{fill:var(--orange-deep)}
-.fretboard .note.root text{fill:var(--cream)}
-.fretboard .note.color circle{fill:var(--gold)}
-.fretboard .note.color text{fill:var(--ink)}
+.fretboard .note circle,.hero-board .note circle{fill:var(--cream);stroke:var(--ink);stroke-width:1.5}
+.fretboard .note text,.hero-board .note text{fill:var(--ink)}
+.fretboard .note.root circle,.hero-board .note.root circle{fill:var(--orange-deep)}
+.fretboard .note.root text,.hero-board .note.root text{fill:var(--cream)}
+.fretboard .note.color circle,.hero-board .note.color circle{fill:var(--gold)}
+.fretboard .note.color text,.hero-board .note.color text{fill:var(--ink)}
 .tab-string-name{fill:var(--ink-soft)}
 .tab-line{stroke:var(--rule)}
 .tab-cell{fill:var(--paper)}
@@ -330,6 +330,8 @@ footer{max-width:1400px;margin:auto;padding:22px 38px 28px;color:var(--ink-soft)
 .rhythm-rest{display:flex;align-items:center;gap:16px;margin:16px 0}
 .rhythm-rest p{margin:0;font-size:14px}
 @media(max-width:1200px){
+  .home-intro{grid-template-columns:1fr;max-width:none}
+  .home-plate{max-width:520px}
   .rhythm-values{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 @media(max-width:760px){
@@ -479,7 +481,6 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
 .brand{display:flex;align-items:center;gap:9px;color:var(--cream);text-decoration:none;font-size:30px;line-height:1;letter-spacing:.03em;text-transform:uppercase}
 .brand-icon{display:inline-grid;place-items:center;color:var(--orange);width:26px;height:28px;font-size:24px}
 .brand-icon .icon{width:26px;height:26px;stroke-width:2}
-.brand-dot{display:none}
 .nav{position:relative;display:flex;align-items:center;gap:10px;min-height:46px;width:100%;padding:11px 10px 11px 14px;margin:2px 0;border:1px solid transparent;border-radius:3px;background:none;color:var(--cream-dim);font-size:15px;font-weight:500;text-align:left;text-decoration:none;white-space:normal;line-height:1.35;flex-shrink:0}
 .nav>span:first-child{width:24px;flex:none;font-size:21px;text-align:center;line-height:1;display:grid;place-items:center}
 .nav .nav-title{width:auto;min-width:0;flex:1;font-size:15px;line-height:1.35}
@@ -503,11 +504,24 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
 .workspace{margin-left:248px;min-width:0}
 .audio-transport{left:248px;z-index:80}
 /* Home */
-.home-intro{padding:20px 0 38px;margin-bottom:34px;max-width:100%;background:var(--orange);color:var(--cream);box-shadow:0 0 0 100vmax var(--orange);clip-path:inset(0 -100vmax)}
-.home-intro h1{font-size:clamp(2.6rem,5vw,4.8rem);line-height:1;margin:20px 0;color:var(--cream)}
-.home-intro p{max-width:540px;font-size:18px;margin-bottom:24px;color:var(--ink)}
-.home-intro .btn{display:inline-flex;gap:14px;align-items:center;text-decoration:none;min-height:48px}
-.home-intro .text-link{color:var(--ink)}
+.home-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:48px;align-items:center;padding:56px 0 64px;margin:0;max-width:100%;background:var(--orange);color:var(--cream);box-shadow:0 0 0 100vmax var(--orange);clip-path:inset(0 -100vmax)}
+.home-intro h1{font-size:clamp(2.8rem,5vw,4.6rem);line-height:.98;margin:0 0 20px;color:var(--cream);text-wrap:balance}
+/* Text on the bright orange is set large (20px semibold), so 3:1 contrast applies. */
+.home-intro p{max-width:34ch;font-size:20px;font-weight:600;line-height:1.45;margin:0 0 28px;color:var(--ink)}
+.home-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.home-intro .btn{min-height:48px;padding-inline:20px;font-size:16px}
+.home-intro .text-link{color:var(--ink);font-size:19px;font-weight:700}
+.home-plate{position:relative;margin:0;padding:26px 26px 18px}
+.screw{position:absolute;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--ink);background:linear-gradient(45deg,transparent 42%,var(--ink) 42% 58%,transparent 58%)}
+.screw:nth-of-type(1){top:8px;left:8px}
+.screw:nth-of-type(2){top:8px;right:8px}
+.screw:nth-of-type(3){bottom:8px;left:8px}
+.screw:nth-of-type(4){bottom:8px;right:8px}
+.hero-board{display:block;width:100%;height:auto}
+.home-plate figcaption{margin-top:10px;font-size:13px;color:var(--ink-soft)}
+.home-facts{display:flex;justify-content:center;flex-wrap:wrap;gap:10px 34px;padding:14px 0;margin-bottom:44px;background:var(--black);color:var(--cream);box-shadow:0 0 0 100vmax var(--black);clip-path:inset(0 -100vmax);font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.home-facts span{display:inline-flex;align-items:center;gap:10px}
+.home-facts span::before{content:"";width:7px;height:7px;background:var(--gold)}
 .home-group{margin-bottom:38px}
 .home-group-heading{margin-bottom:18px}
 .home-group-heading h2{font-size:28px;margin-bottom:4px}
@@ -520,7 +534,6 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
 .home-card-icon .icon{width:22px;height:22px}
 .home-card h3{font-size:24px;line-height:1.15}
 .home-card p{font-size:15px;line-height:1.55;margin:0}
-.home-card-open{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:auto;color:var(--orange-deep);font-size:13px;font-weight:600}
 @media(max-width:1200px){
   .home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
@@ -553,8 +566,10 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
   .header-end{display:none}
 }
 @media(max-width:600px){
-  .home-intro{padding-top:6px;margin-bottom:26px;padding-bottom:28px}
-  .home-intro p{font-size:16px}
+  .home-intro{grid-template-columns:1fr;gap:28px;padding:30px 0 36px}
+  .home-intro p{font-size:19px}
+  .home-facts{justify-content:flex-start;gap:8px 22px;font-size:12px}
+  .home-plate{padding:22px 16px 14px}
   .home-grid{grid-template-columns:1fr;gap:12px}
   .home-card{padding:0 18px 18px}
   .home-card-top{margin:0 -18px 14px;padding:10px 18px}
