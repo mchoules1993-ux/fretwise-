@@ -581,3 +581,13 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
   .mobile-home{font-size:22px}
   .mobile-home-label{margin-left:5px}
 }
+
+/* Practice tempo and style examples */
+.legend-tempo-control input[type=range]{width:200px;max-width:100%}
+.legend-tempo-control small{font-size:12px}
+.lick-card .lick-tempo{display:inline-flex}
+.soloing-rule{min-width:0}
+.soloing-examples{margin-top:22px;border-top:1px solid var(--rule);padding-top:18px}
+.soloing-example summary{font-weight:600}
+.soloing-example .tab-scroll{margin-top:16px}
+@media(max-width:600px){.soloing-example .tab-scroll{overflow:visible}}

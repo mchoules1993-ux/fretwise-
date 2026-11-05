@@ -1,10 +1,11 @@
 const vm=require('node:vm'),fs=require('node:fs'),assert=require('node:assert/strict');
+const listeners={};
 const elements=new Map();const element=id=>{if(!elements.has(id))elements.set(id,{textContent:'',innerHTML:'',disabled:false,dataset:{},classList:{remove(){},toggle(){}},setAttribute(){},removeAttribute(){},focus(){},scrollIntoView(){},append(){},click(){},remove(){}});return elements.get(id)};
 let serial=0;const timeouts=new Map(),frames=new Map(),sources=[];
 class Param{constructor(){this.value=0}setValueAtTime(){}exponentialRampToValueAtTime(){}linearRampToValueAtTime(){}setValueCurveAtTime(){}setTargetAtTime(value){this.value=value}}
 class Node{constructor(){this.gain=new Param;this.frequency=new Param;this.playbackRate=new Param;this.Q=new Param;this.threshold=new Param;this.knee=new Param;this.ratio=new Param;this.attack=new Param;this.release=new Param;this.delayTime=new Param}connect(){}disconnect(){this.disconnected=true}start(when=0){this.when=when;sources.push(this)}stop(){this.stopped=true}}
 class Context{constructor(){this.currentTime=0;this.sampleRate=44100;this.state='running';this.destination=new Node}async resume(){this.state='running'}createBuffer(){return{duration:2,length:88200,sampleRate:44100,numberOfChannels:1,getChannelData:()=>new Float32Array(88200)}}createBufferSource(){return new Node}createGain(){return new Node}createOscillator(){return new Node}createDynamicsCompressor(){return new Node}createDelay(){return new Node}createBiquadFilter(){return new Node}createWaveShaper(){return new Node}}
-const c=vm.createContext({console,Float32Array,Uint8Array,DataView,ArrayBuffer,Map,Set,Blob,URL,window:{AudioContext:Context,addEventListener(){}},document:{hidden:false,body:element('body'),getElementById:element,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){},createElement:()=>element('download')},history:{replaceState(){},pushState(){}},location:{hash:''},setTimeout:(fn,ms)=>{const id=++serial;timeouts.set(id,{fn,ms});return id},clearTimeout:id=>timeouts.delete(id),requestAnimationFrame:fn=>{const id=++serial;frames.set(id,fn);return id},cancelAnimationFrame:id=>frames.delete(id),atob:()=>'',fetch:()=>{throw Error('Unexpected request')}});
+const c=vm.createContext({console,Float32Array,Uint8Array,DataView,ArrayBuffer,Map,Set,Blob,URL,window:{AudioContext:Context,addEventListener(){}},document:{hidden:false,body:element('body'),getElementById:element,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(type,fn){(listeners[type]??=[]).push(fn)},createElement:()=>element('download')},history:{replaceState(){},pushState(){}},location:{hash:''},setTimeout:(fn,ms)=>{const id=++serial;timeouts.set(id,{fn,ms});return id},clearTimeout:id=>timeouts.delete(id),requestAnimationFrame:fn=>{const id=++serial;frames.set(id,fn);return id},cancelAnimationFrame:id=>frames.delete(id),atob:()=>'',fetch:()=>{throw Error('Unexpected request')}});
 for(const f of ['sampled-audio','backing','licks','rhythm','releases','chords','listen','navigation','app'])vm.runInContext(fs.readFileSync(`site/${f}.js`,'utf8'),c,{filename:f});
 const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)await Promise.resolve()};
 (async()=>{
@@ -111,6 +112,50 @@ const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)awai
  c.finishRender({getChannelData:()=>new Float32Array(128)});await fastExport;
  assert.match(element('download').download,/fretwise-legends-lick-10-96bpm/);
  assert.equal(run('fastExportButton.disabled'),false);
+ // Dragging tempo must stop old audio and affect count-in, loops and export.
+ run("state.view='legends';lickOptions.speed=100;lickOptions.loop=true");
+ await run('playBluesLick(0)');
+ for(const fn of listeners.input)fn({target:{id:'legend-speed',value:'83',dataset:{},setAttribute(){}}});
+ assert.equal(run('lickOptions.speed'),83);
+ assert.equal(run('playing'),false);
+ assert.equal(run('lickRun'),null);
+ assert.equal(element('legend-speed-value').textContent,'83%');
+ assert.match(run('legendsView()'),/71 BPM/);
+ await run('playBluesLick(0)');
+ assert.ok(Math.abs(run('lickRun.seconds')-60/71.38)<1e-10);
+ assert.ok(Math.abs(run('lickRun.when-lickRun.start')-240/71.38)<1e-10);
+ assert.ok(Math.abs(run('lickRun.next-lickRun.when')-720/71.38)<1e-10);
+ run('stopAudio();globalThis.customExportButton={disabled:false}');
+ const customExport=run('downloadBluesLick(0,customExportButton)');await flush();
+ c.finishRender({getChannelData:()=>new Float32Array(128)});await customExport;
+ assert.match(element('download').download,/fretwise-legends-lick-1-71bpm/);
+ for(const [input,want]of [['0',40],['999',125],['82.6',83],['oops',83]]){
+  for(const fn of listeners.input)fn({target:{id:'legend-speed',value:input,dataset:{},setAttribute(){}}});
+  assert.equal(run('lickOptions.speed'),want);
+ }
+ // Returning to Blues licks must retain a selectable custom shared speed.
+ run("state.view='licks'");assert.match(run('licksView()'),/<option value="83" selected/);
+ run("state.view='legends';lickOptions.speed=100");
+ // Style tabs must teach real chord-tone landings at the stated chord change.
+ const examples=JSON.parse(run('JSON.stringify(SOLOING_EXAMPLES)'));
+ const chordTones=[[[9,0,4,7],[2,5,9,0]],[[9,1,4,7],[2,6,9,0]],[[4,8,11,2],[9,1,4,7]],[[9,0,4,7],[2,6,9,0]]];
+ assert.equal(examples.length,4);
+ for(let i=0;i<4;i++){
+  const example=examples[i];
+  for(const e of example.events){assert.ok(e.b>=0&&e.d>0&&e.b+e.d<=8+1e-6);assert.ok(e.s>=1&&e.s<=6&&e.f>=0&&e.f<=24)}
+  for(const [bar,tones]of chordTones[i].entries()){
+   const landing=example.events.find(e=>e.b===bar*4);assert.ok(landing,'Land on each chord change');
+   const pitch=([0,64,59,55,50,45,40][landing.s]+landing.f+(landing.bend||0))%12;
+   assert.ok(tones.includes(pitch),`${example.name}: bar ${bar+1} must land on a chord tone`);
+  }
+  run(`state.view='jam';state.jamMode='studio';state.studioTrack=${i}`);
+  const page=run('jamView()');
+  assert.match(page,new RegExp(`data-soloing-example="${i}" open`));
+  assert.equal((page.match(/data-soloing-example=/g)||[]).length,4);
+  assert.equal((page.match(/<summary>Notes and timing<\/summary>/g)||[]).length,4,'Each tab needs an accessible note sequence');
+  assert.ok(!/NaN|undefined/.test(page));
+ }
+ run("state.jamMode='flexible'");assert.equal((run('jamView()').match(/data-soloing-example=/g)||[]).length,4);
  // Every new phrase must fit the declared two bars and generate valid mobile + wide SVG.
  for(let i=0;i<run('LEGEND_LICKS.length');i++){
   const events=JSON.parse(run(`JSON.stringify(LEGEND_LICKS[${i}].events)`));
@@ -118,5 +163,5 @@ const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)awai
   const html=run(`lickTab(LEGEND_LICKS[${i}],${i})`);assert.equal((html.match(/class="beat-tile"/g)||[]).length,8);assert.ok(!/NaN|undefined/.test(html));
   assert.equal((html.match(/<svg[ >]/g)||[]).length,(html.match(/<\/svg>/g)||[]).length);
  }
- console.log('PASS: cancelled loads, competing Play taps, 12 exact loop cycles, stopped callbacks, isolated export bus, source cleanup, ten valid phrasing studies, five fast studies at three practice speeds, fast WAV export, mobile SVGs, sample velocities/takes, cancelled backing downloads, aligned stems, live mixer and chord-guide quality.');
+ console.log('PASS: cancelled loads, competing Play taps, 12 exact loop cycles, stopped callbacks, isolated export bus, source cleanup, ten valid phrasing studies, five fast studies at three practice speeds, custom tempo input/playback/loop/WAV export, four accessible chord-tone examples, fast WAV export, mobile SVGs, sample velocities/takes, cancelled backing downloads, aligned stems, live mixer and chord-guide quality.');
 })().catch(e=>{console.error(e);process.exitCode=1});
