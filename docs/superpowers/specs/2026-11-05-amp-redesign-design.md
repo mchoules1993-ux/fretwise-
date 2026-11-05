@@ -1,6 +1,6 @@
 # Fretwise redesign: orange amp look
 
-Date: 2026-11-05 · Status: draft, waiting for owner review
+Date: 2026-11-05 · Status: approved by the owner; implemented
 
 ## Why
 

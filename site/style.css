@@ -322,6 +322,7 @@ footer{max-width:1400px;margin:auto;padding:22px 38px 28px;color:var(--ink-soft)
 .rhythm-event small{font-size:10px;color:var(--ink-soft)}
 .rhythm-event .rhythm-symbol{width:42px;height:45px}
 .rhythm-event.sounding{background:var(--gold)}
+.rhythm-event.sounding small{color:var(--ink)}
 .rhythm-counts{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));margin:6px 0 24px;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden}
 .rhythm-counts div{text-align:center;padding:10px 0;font-size:12px;color:var(--ink-soft)}
 .rhythm-counts .numbered{border-left:1.5px solid var(--ink);color:var(--ink);font-weight:600;background:var(--cream-lo)}
@@ -508,8 +509,8 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
 /* Home */
 .home-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:48px;align-items:center;padding:56px 0 64px;margin:0;max-width:100%;background:var(--orange);color:var(--cream);box-shadow:0 0 0 100vmax var(--orange);clip-path:inset(0 -100vmax)}
 .home-intro h1{font-size:clamp(2.8rem,5vw,4.6rem);line-height:.98;margin:0 0 20px;color:var(--cream);text-wrap:balance}
-/* Text on the bright orange is set large (20px semibold), so 3:1 contrast applies. */
-.home-intro p{max-width:34ch;font-size:20px;font-weight:600;line-height:1.45;margin:0 0 28px;color:var(--ink)}
+/* Text on the bright orange is set large (20px bold), so 3:1 contrast applies. */
+.home-intro p{max-width:34ch;font-size:20px;font-weight:700;line-height:1.45;margin:0 0 28px;color:var(--ink)}
 .home-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
 .home-intro .btn{min-height:48px;padding-inline:20px;font-size:16px}
 .home-intro .text-link{color:var(--ink);font-size:19px;font-weight:700}

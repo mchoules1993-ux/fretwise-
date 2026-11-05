@@ -4,8 +4,9 @@ const assert=require('node:assert/strict'),fs=require('fs'),path=require('path')
 const site=f=>fs.readFileSync(path.join(__dirname,'..','site',f),'utf8');
 
 // 1. Colours live in CSS only, so the look can change in one place.
-for(const f of ['app.js','listen.js','navigation.js','chords.js']){
-  assert.doesNotMatch(site(f),/(?<!&)#[0-9a-fA-F]{6}\b|(?<!&)#[0-9a-fA-F]{3}\b(?![\w-])/,`${f} must not hard-code colours`);
+const scripts=fs.readdirSync(path.join(__dirname,'..','site')).filter(f=>f.endsWith('.js'));
+for(const f of scripts){
+  assert.doesNotMatch(site(f),/(?<!&)#[0-9a-fA-F]{6}\b|(?<!&)#[0-9a-fA-F]{3}\b(?![\w-])|rgba?\(/,`${f} must not hard-code colours`);
 }
 
 // 2. The palette from the spec, on :root.
@@ -20,6 +21,17 @@ const lum=h=>{const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(x=>x<=
 const ratio=(a,b)=>{const[x,y]=[lum(a),lum(b)].sort((p,q)=>q-p);return(x+.05)/(y+.05);};
 for(const[fg,bg,min]of[['cream','orange-deep',4.5],['ink','cream',4.5],['ink-soft','cream',4.5],['orange-deep','cream',4.5],['gold','black',4.5],['cream','black',4.5],['cream','orange',3]])
   assert.ok(ratio(want[fg],want[bg])>=min,`${fg} on ${bg} needs ${min}:1`);
+
+// 3b. Every CSS variable the scripts use still exists (an undefined one silently drops the colour).
+const defined=new Set([...root.matchAll(/--([\w-]+)\s*:/g)].map(m=>m[1]));
+for(const f of scripts)for(const m of site(f).matchAll(/var\(--([\w-]+)/g))
+  assert.ok(defined.has(m[1]),`${f} uses var(--${m[1]}), which :root does not define`);
+
+// 3c. Text that sits on a coloured state keeps readable contrast.
+const rule=sel=>{const i=css.indexOf(sel+'{');return i<0?'':css.slice(i,css.indexOf('}',i));};
+assert.match(rule('.rhythm-event.sounding small'),/color:var\(--ink\)/,'Beat labels must stay dark on the gold "sounding" tile (ink-soft on gold is 2.7:1)');
+// Ink on bright orange is 4.2:1, so the hero paragraph must be large bold text (>=18.66px at 700).
+assert.match(rule('.home-intro p'),/font-weight:700/,'Home hero paragraph must be bold to count as large text on --orange');
 
 // 4. The new type, and none of the old.
 assert.doesNotMatch(css,/Space Grotesk|DM Sans/,'Old fonts must be gone');
