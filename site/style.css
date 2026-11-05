@@ -99,3 +99,8 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
  .home-grid{grid-template-columns:1fr;gap:12px}.home-card{padding:20px}.home-card-top{margin-bottom:18px}.home-group{margin-bottom:30px}
  .mobile-header{padding:8px 14px}.mobile-home{font-size:21px}.mobile-home-label{margin-left:5px}
 }
+/* SVG parts (colours moved out of JS) */
+.fb-wood{fill:#171b18}.fb-nut{stroke:#a3aa98}.fb-fret{stroke:#3e473c}.fb-fret-num{fill:#9ca895}.fb-inlay{fill:#3e4939}.fb-string-name{fill:#b5c0ad}.fb-string{stroke:#6b7465}
+.fretboard .note circle{fill:#3b4837}.fretboard .note text{fill:#e1ead9}.fretboard .note.root circle{fill:#c1f56b}.fretboard .note.color circle{fill:#f1bd78}.fretboard .note.root text,.fretboard .note.color text{fill:#1b2513}
+.tab-string-name{fill:#aeb9a7}.tab-line{stroke:#56604f}.tab-cell{fill:#1d211e}.tab-fret{fill:#e6e9df}.tab-fret.root{fill:#c1f56b}
+.listen-target{fill:var(--accent)}.listen-target.open{fill:none;stroke:var(--accent)}.listen-target-label{fill:var(--ink)}
