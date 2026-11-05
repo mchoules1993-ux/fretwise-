@@ -156,6 +156,38 @@ const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)awai
   assert.ok(!/NaN|undefined/.test(page));
  }
  run("state.jamMode='flexible'");assert.equal((run('jamView()').match(/data-soloing-example=/g)||[]).length,4);
+ // Soloing recordings must stay at their written tempo regardless of Legends settings.
+ // Catch missing controls, wrong tab/tempo, overlapping playback and stale loads.
+ const soloPage=run('jamView()');
+ assert.equal((soloPage.match(/data-play-solo=/g)||[]).length,4,'Each soloing tab needs a recording');
+ assert.equal((soloPage.match(/data-download-solo=/g)||[]).length,4);
+ for(const [i,bpm]of [72,86,104,100].entries()){
+  run("state.view='jam';lickOptions.speed=40;lickOptions.loop=true;lickOptions.backing=true");
+  await run(`playSoloingExample(${i})`);
+  assert.ok(Math.abs(run('lickRun.seconds')-60/bpm)<1e-10);
+  assert.ok(Math.abs(run('lickRun.when-lickRun.start')-240/bpm)<1e-10);
+  assert.equal(run('lickRun.index'),`solo-${i}`);
+  assert.equal(run('lickRun.options.loop'),false);
+  assert.equal(run('lickRun.options.backing'),false);
+  assert.deepEqual(JSON.parse(run('JSON.stringify(lickRun.lick.events)')),examples[i].events);
+  const activeSources=run('oscillators.slice()');
+  run('stopAudio()');
+  assert.equal(run('playing'),false);assert.equal(run('lickRun'),null);
+  assert.ok(activeSources.filter(s=>s.onended).every(s=>s.stopped),'Stop must cancel scheduled notes');
+ }
+ run("loadGuitarSamples=()=>new Promise(resolve=>{globalThis.completeSoloLoad=resolve})");
+ const pendingSolo=run('playSoloingExample(1)');await flush();
+ run("navigate('scales')");const soloSourceCount=sources.length;
+ c.completeSoloLoad();await pendingSolo;
+ assert.equal(sources.length,soloSourceCount);assert.equal(run('playing'),false);
+ run("loadGuitarSamples=async()=>{};state.view='jam';globalThis.soloExportButton={disabled:false}");
+ for(const [i,bpm]of [72,86,104,100].entries()){
+  const download=run(`downloadSoloingExample(${i},soloExportButton)`);await flush();
+  run("state.view='legends';lickOptions.speed=125");
+  c.finishRender({getChannelData:()=>new Float32Array(128)});await download;
+  assert.match(element('download').download,new RegExp(`fretwise-soloing-.*-${bpm}bpm\\.wav$`));
+  assert.equal(run('soloExportButton.disabled'),false);
+ }
  // Every new phrase must fit the declared two bars and generate valid mobile + wide SVG.
  for(let i=0;i<run('LEGEND_LICKS.length');i++){
   const events=JSON.parse(run(`JSON.stringify(LEGEND_LICKS[${i}].events)`));
@@ -163,5 +195,13 @@ const run=code=>vm.runInContext(code,c),flush=async()=>{for(let i=0;i<8;i++)awai
   const html=run(`lickTab(LEGEND_LICKS[${i}],${i})`);assert.equal((html.match(/class="beat-tile"/g)||[]).length,8);assert.ok(!/NaN|undefined/.test(html));
   assert.equal((html.match(/<svg[ >]/g)||[]).length,(html.match(/<\/svg>/g)||[]).length);
  }
- console.log('PASS: cancelled loads, competing Play taps, 12 exact loop cycles, stopped callbacks, isolated export bus, source cleanup, ten valid phrasing studies, five fast studies at three practice speeds, custom tempo input/playback/loop/WAV export, four accessible chord-tone examples, fast WAV export, mobile SVGs, sample velocities/takes, cancelled backing downloads, aligned stems, live mixer and chord-guide quality.');
+ // Unsupported Web Audio must not leave the example stuck in a preparing state.
+ const soloStop=element('unsupported-stop'),soloStatus=element('solo-status-0');
+ c.document.querySelector=selector=>selector==='[data-stop-solo="0"]'?soloStop:null;
+ c.document.querySelectorAll=selector=>selector==='[data-stop-solo]'?[soloStop]:selector==='[id^="solo-status-"]'?[soloStatus]:[];
+ c.window.AudioContext=undefined;
+ await run('playSoloingExample(0)');
+ assert.equal(soloStop.disabled,true);
+ assert.doesNotMatch(soloStatus.textContent,/Preparing/);
+ console.log('PASS: cancelled loads, competing Play taps, 12 exact loop cycles, stopped callbacks, isolated export bus, source cleanup, ten valid phrasing studies, five fast studies at three practice speeds, custom tempo input/playback/loop/WAV export, four accessible chord-tone examples with recordings/cancellation/WAV export, unsupported audio recovery, fast WAV export, mobile SVGs, sample velocities/takes, cancelled backing downloads, aligned stems, live mixer and chord-guide quality.');
 })().catch(e=>{console.error(e);process.exitCode=1});

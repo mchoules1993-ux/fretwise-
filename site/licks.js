@@ -127,16 +127,21 @@ function licksView(){const legends=state.view==='legends';return intro()+`<secti
 function lickLead(ctx,e,when,seconds,track,tone=lickOptions.tone){[e,...(e.extra||[])].forEach(n=>sampleVoice(ctx,lickMidi(n),when,e.d*seconds,(e.legato?.28:.36)*(e.accent||1)/(e.extra?1.6:1),tone,track,{...e,...n}));}
 function lickClick(ctx,when,strong,track){const o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=strong?1100:800;g.gain.setValueAtTime(.035,when);g.gain.exponentialRampToValueAtTime(.0001,when+.055);o.connect(g);g.connect(ctx.destination);o.start(when);o.stop(when+.06);if(track)keepSource(o,g);}
 function lickBacking(ctx,when,seconds,track,quality='m'){for(let beat=0;beat<8;beat++){const start=when+beat*seconds;sampleVoice(ctx,beat%2===0?45:52,start,seconds*.8,.16,'bass',track);if(beat%4===0)(quality==='7'?[57,61,64,67]:[57,60,64]).forEach((m,i)=>sampleVoice(ctx,m,start+i*.014,seconds*2.8,.075,'clean',track));}}
-function resetLickUI(){document.querySelectorAll('[data-lick-note]').forEach(e=>e.classList.remove('sounding'));document.querySelectorAll('[data-play-lick]').forEach(e=>{e.textContent=`▶ Play lick ${Number(e.dataset.playLick)+1}`;e.setAttribute('aria-pressed','false');});}
+function resetLickUI(){document.querySelectorAll('[data-play-solo]').forEach(e=>{e.textContent='▶ Play example';e.setAttribute('aria-pressed','false');});document.querySelectorAll('[data-stop-solo]').forEach(e=>{e.disabled=true;});document.querySelectorAll('[id^="solo-status-"]').forEach(e=>{e.textContent='Hear the written phrase, then try it yourself.';});document.querySelectorAll('[data-lick-note]').forEach(e=>e.classList.remove('sounding'));document.querySelectorAll('[data-play-lick]').forEach(e=>{e.textContent=`▶ Play lick ${Number(e.dataset.playLick)+1}`;e.setAttribute('aria-pressed','false');});}
 let lickRun=null,lickFrame=0,lickPumpTimer=0;
 function stopLickPlayback(){cancelAnimationFrame(lickFrame);clearTimeout(lickPumpTimer);lickRun=null;}
-async function playBluesLick(index){
- stopAudio();const generation=lickPlaybackGeneration,view=state.view,lick=activeLicks()[index],options={...lickOptions};
- const ctx=await getAudio();if(!ctx||generation!==lickPlaybackGeneration||state.view!==view)return;
+function playBluesLick(index){return playTabExample(index,activeLicks()[index],{...lickOptions},`[data-play-lick="${index}"]`);}
+async function playTabExample(index,lick,options,buttonSelector,stopSelector=null,report=status){
+ stopAudio();const generation=lickPlaybackGeneration,view=state.view;
+ const stopButton=stopSelector?document.querySelector(stopSelector):null;if(stopButton)stopButton.disabled=false;
+ report('Preparing guitar audio…');
+ const ctx=await getAudio({instruments:options.backing?['guitar','bass']:['guitar']});
+ if(generation!==lickPlaybackGeneration||state.view!==view)return;
+ if(!ctx){resetLickUI();return;}
  const seconds=60/(lick.bpm*options.speed/100),start=ctx.currentTime+.12,when=start+4*seconds;
  playing=true;lickRun={ctx,when,start,seconds,lick,index,options,generation,next:when+12*seconds};
  for(let i=0;i<4;i++)lickClick(ctx,start+i*seconds,i===0,true);
- const button=document.querySelector(`[data-play-lick="${index}"]`);if(button){button.textContent='↻ Restart lick';button.setAttribute('aria-pressed','true');}
+ const button=document.querySelector(buttonSelector);if(button){button.textContent=stopSelector?'↻ Restart example':'↻ Restart lick';button.setAttribute('aria-pressed','true');}
  const schedule=at=>{if(options.backing)lickBacking(ctx,at,seconds,true,lick.backing);lick.events.forEach(e=>lickLead(ctx,e,at+e.b*seconds,seconds,true,options.tone));};
  schedule(when);
  function pump(){const r=lickRun;if(!r||generation!==lickPlaybackGeneration)return;
@@ -148,19 +153,23 @@ async function playBluesLick(index){
  let phase='';
  function frame(){const r=lickRun;if(!r||generation!==lickPlaybackGeneration)return;
   const elapsed=(ctx.currentTime-when)/seconds,local=options.loop?((elapsed%12)+12)%12:elapsed;
-  if(!options.loop&&elapsed>=8+1/seconds){stopAudio();status('Your turn: match the phrasing, then answer it.');return;}
+  if(!options.loop&&elapsed>=8+1/seconds){stopAudio();report('Your turn: match the phrasing, then answer it.');return;}
   const note=elapsed<0||local>=8?-1:lick.events.findIndex(e=>local>=e.b&&local<e.b+e.d);
   document.querySelectorAll('[data-lick-note]').forEach(n=>n.classList.toggle('sounding',n.dataset.lickNote===`${index}-${note}`));
   const next=elapsed<0?`Count in ${Math.max(1,Math.floor((ctx.currentTime-start)/seconds)+1)} of 4`:local>=8?options.loop?'One-bar gap · get ready':'Let it ring…':`Bar ${Math.floor(local/4)+1} · beat ${Math.floor(local%4)+1}`;
-  if(next!==phase){phase=next;status(`${lick.name} · ${Math.round(60/seconds)} BPM · ${next}`);}
+  if(next!==phase){phase=next;report(`${lick.name} · ${Math.round(60/seconds)} BPM · ${next}`);}
   lickFrame=requestAnimationFrame(frame);
  }
  lickFrame=requestAnimationFrame(frame);
 }
-async function downloadBluesLick(index,button){
- const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;if(!Offline){status('Audio download is unavailable in this browser. Use Play lick instead.');return;}
- const lick=activeLicks()[index],options={...lickOptions},view=state.view;button.disabled=true;let offline=null;try{const live=await getAudio({feedback:false});if(!live)throw Error('Audio unavailable');const seconds=60/(lick.bpm*options.speed/100),rate=44100,ctx=new Offline(2,Math.ceil((12*seconds+1)*rate),rate);offline=ctx;
- for(let i=0;i<4;i++)lickClick(ctx,.05+i*seconds,i===0,false);const when=.05+4*seconds;if(options.backing)lickBacking(ctx,when,seconds,false,lick.backing);lick.events.forEach(e=>lickLead(ctx,e,when+e.b*seconds,seconds,false,options.tone));const rendered=await ctx.startRendering(),channels=[rendered.getChannelData(0),rendered.getChannelData(1)],frames=channels[0].length,bytes=frames*4,buf=new ArrayBuffer(44+bytes),v=new DataView(buf);const str=(o,t)=>[...t].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));str(0,'RIFF');v.setUint32(4,36+bytes,true);str(8,'WAVE');str(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,2,true);v.setUint32(24,rate,true);v.setUint32(28,rate*4,true);v.setUint16(32,4,true);v.setUint16(34,16,true);str(36,'data');v.setUint32(40,bytes,true);for(let i=0;i<frames;i++)for(let c=0;c<2;c++)v.setInt16(44+i*4+c*2,Math.max(-1,Math.min(1,channels[c][i]))*32767,true);sampleBuses.get(ctx)?.nodes.forEach(n=>n.disconnect());sampleBuses.delete(ctx);const url=URL.createObjectURL(new Blob([buf],{type:'audio/wav'})),a=document.createElement('a');a.href=url;a.download=`fretwise-${view}-lick-${index+1}-${Math.round(60/seconds)}bpm.wav`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);status('WAV audio ready, with count-in and your selected tempo and backing.');}catch{status('Audio download failed. You can still use Play lick.');}finally{if(offline)resetSampleAudio(offline);button.disabled=false;}
+function downloadBluesLick(index,button){
+ const lick=activeLicks()[index],options={...lickOptions};
+ return downloadTabExample(lick,options,`fretwise-${state.view}-lick-${index+1}-${Math.round(lick.bpm*options.speed/100)}bpm.wav`,button);
+}
+async function downloadTabExample(lick,options,filename,button){
+ const Offline=window.OfflineAudioContext||window.webkitOfflineAudioContext;if(!Offline){status('Audio download is unavailable in this browser. Use playback instead.');return;}
+ button.disabled=true;let offline=null;try{const live=await getAudio({feedback:false,instruments:options.backing?['guitar','bass']:['guitar']});if(!live)throw Error('Audio unavailable');const seconds=60/(lick.bpm*options.speed/100),rate=44100,ctx=new Offline(2,Math.ceil((12*seconds+1)*rate),rate);offline=ctx;
+ for(let i=0;i<4;i++)lickClick(ctx,.05+i*seconds,i===0,false);const when=.05+4*seconds;if(options.backing)lickBacking(ctx,when,seconds,false,lick.backing);lick.events.forEach(e=>lickLead(ctx,e,when+e.b*seconds,seconds,false,options.tone));const rendered=await ctx.startRendering(),channels=[rendered.getChannelData(0),rendered.getChannelData(1)],frames=channels[0].length,bytes=frames*4,buf=new ArrayBuffer(44+bytes),v=new DataView(buf);const str=(o,t)=>[...t].forEach((c,i)=>v.setUint8(o+i,c.charCodeAt(0)));str(0,'RIFF');v.setUint32(4,36+bytes,true);str(8,'WAVE');str(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,2,true);v.setUint32(24,rate,true);v.setUint32(28,rate*4,true);v.setUint16(32,4,true);v.setUint16(34,16,true);str(36,'data');v.setUint32(40,bytes,true);for(let i=0;i<frames;i++)for(let c=0;c<2;c++)v.setInt16(44+i*4+c*2,Math.max(-1,Math.min(1,channels[c][i]))*32767,true);sampleBuses.get(ctx)?.nodes.forEach(n=>n.disconnect());sampleBuses.delete(ctx);const url=URL.createObjectURL(new Blob([buf],{type:'audio/wav'})),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);status('WAV audio ready, with count-in and the same notes and tempo as playback.');}catch{status('Audio download failed. You can still play the example.');}finally{if(offline)resetSampleAudio(offline);button.disabled=false;}
 }
 document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.playLick!==undefined)playBluesLick(Number(b.dataset.playLick)).catch(audioError);if(b.id==='lick-stop'){stopAudio();status('Playback stopped.');}if(b.dataset.downloadLick!==undefined)downloadBluesLick(Number(b.dataset.downloadLick),b);});
 document.addEventListener('change',e=>{const id=e.target.id;if(!['lick-speed','lick-loop','lick-backing','lick-tone'].includes(id))return;stopAudio();if(id==='lick-speed')lickOptions.speed=Number(e.target.value);if(id==='lick-tone')lickOptions.tone=e.target.value;if(id==='lick-loop')lickOptions.loop=e.target.checked;if(id==='lick-backing')lickOptions.backing=e.target.checked;render();});

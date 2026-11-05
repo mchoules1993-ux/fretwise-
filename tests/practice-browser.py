@@ -1,4 +1,8 @@
 """Optional browser checks: python3 tests/practice-browser.py (Playwright + Chromium)."""
+import array
+import math
+import tempfile
+import wave
 import functools
 import shutil
 import threading
@@ -58,9 +62,51 @@ try:
                 expect(detail).not_to_have_attribute("open", "")
                 page.keyboard.press("Enter")
                 expect(detail).to_have_attribute("open", "")
+                play = detail.locator(f'[data-play-solo="{index}"]')
+                stop = detail.locator(f'[data-stop-solo="{index}"]')
+                expect(stop).to_be_disabled()
+                play.click()
+                page.wait_for_function(f"playing && lickRun?.index === 'solo-{index}'")
+                expect(play).to_have_attribute("aria-pressed", "true")
+                expect(stop).to_be_enabled()
+                bpm = [72, 86, 104, 100][index]
+                assert abs(page.evaluate("lickRun.seconds") - 60 / bpm) < 1e-10
+                page.wait_for_function(f"document.querySelector('[data-lick-note=\"solo-{index}-0\"]').classList.contains('sounding')")
+                expect(detail.locator(f"#solo-status-{index}")).to_contain_text("Bar 1")
+                stop.click()
+                assert page.evaluate("!playing && lickRun === null && oscillators.length === 0")
+                expect(play).to_have_attribute("aria-pressed", "false")
+                expect(stop).to_be_disabled()
+                if width == 1400:
+                    with page.expect_download() as event:
+                        detail.locator(f'[data-download-solo="{index}"]').click()
+                    download = event.value
+                    assert download.suggested_filename.endswith(f"-{bpm}bpm.wav")
+                    with tempfile.TemporaryDirectory() as tmp:
+                        target = Path(tmp) / download.suggested_filename
+                        download.save_as(target)
+                        with wave.open(str(target)) as wav:
+                            assert wav.getnchannels() == 2 and wav.getframerate() == 44100
+                            assert abs(wav.getnframes() / 44100 - (720 / bpm + 1)) < 1 / 44100
+                            wav.setpos(int((.05 + 240 / bpm) * 44100))
+                            samples = array.array('h', wav.readframes(int(480 / bpm * 44100)))
+                            rms = math.sqrt(sum(v * v for v in samples) / len(samples)) / 32768
+                            assert rms > .001, f"Silent guitar recording: {index}"
+                            assert max(abs(v) for v in samples) < 32767, f"Clipped recording: {index}"
                 assert detail.evaluate("e=>e.getBoundingClientRect().right<=innerWidth"), "Jam example overflows"
                 if width > 320:
                     assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), "Jam page overflows"
+            # Switching demos, starting the backing and navigating must stop the old phrase.
+            page.evaluate("playSoloingExample(0)")
+            page.evaluate("playSoloingExample(2)")
+            assert page.evaluate("lickRun.index === 'solo-2'")
+            expect(page.locator('[data-stop-solo="0"]')).to_be_disabled()
+            page.locator('#start-jam').click()  # First tap stops the active demo.
+            assert page.evaluate("lickRun === null && !playing")
+            page.evaluate("playSoloingExample(3)")
+            page.evaluate("navigate('legends')")
+            assert page.evaluate("lickRun === null && !playing")
+            page.evaluate("navigate('jam')")
             if width in [1400, 390]:
                 page.add_style_tag(content=".audio-transport,.mobile-header,.skip{visibility:hidden!important}")
                 page.locator(".soloing-rule").screenshot(path=f"/tmp/fretwise-soloing-{width}.png")
@@ -68,7 +114,7 @@ try:
             expect(page.locator(".soloing-example")).to_have_count(4)
             assert not errors, errors
             page.close()
-            print(f"PASS: {width}px tempo, focus, playback, presets, four style tabs, keyboard and layout")
+            print(f"PASS: {width}px tempo, focus, playback, presets, four style recordings, count-in/highlights, Stop, WAV signal, navigation, keyboard and layout")
         browser.close()
 finally:
     server.shutdown()

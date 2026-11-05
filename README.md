@@ -16,7 +16,7 @@ Fretwise is an interactive guitar theory studio for learning scales, modes, harm
 
 - Rhythm & Beats: 4/4 note values, counting, rests, five playable patterns and tap practice with timing feedback
 - Legends: ten distinct phrasing studies (five foundations and five faster studies at 112–140 BPM) for SRV, Hendrix, Page, Clapton and Moore, including three adapted public-domain motifs, song-study links, shuffle/triplet/sixteenth timing, appropriate backing, and a 40–125% tempo slider with live BPM and matching WAV exports
-- Four original two-bar Jam Room soloing tabs for slow minor blues, Texas shuffle, driving blues-rock and clean funk, with counting, technique tips, chord-tone targets and accessible note lists
+- Four original two-bar Jam Room soloing tabs for slow minor blues, Texas shuffle, driving blues-rock and clean funk, with counting, technique tips, chord-tone targets, accessible note lists and playable solo-guitar demos. Each demo has a four-beat count-in, synchronized tab highlighting, Stop and WAV download at its written tempo
 - Four original arranged backing tracks with synchronized guitar/bass/drum stems, live mixer, count-in, MP3 downloads and chord-following note guides
 - Home: cards for every section; vertically scrolling desktop sidebar and a Sections side panel for phones and narrow windows, with keyboard focus handling and browser Back/Forward
 - Release list: complete implemented-feature catalogue, section links and release history
@@ -77,3 +77,5 @@ python3 tests/practice-browser.py
 
 Checks the Legends slider, keyboard focus, playback cancellation, presets,
 BPM labels and all four Jam Room style disclosures at desktop and phone widths.
+Also checks soloing playback, count-in/highlighting, Stop, switching examples,
+navigation cancellation and all four WAV downloads (duration, audible guitar and no clipping).
