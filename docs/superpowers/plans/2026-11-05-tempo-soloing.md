@@ -17,7 +17,7 @@ Preserve the orange amp theme, existing preset speeds and pitch. Prevent stale p
 - [x] In `site/licks.js`, add the Legends slider, live speed/BPM updates and validated 40–125% input; retain shared scheduling/export.
 - [x] In `site/backing.js`, define four original two-bar examples and `soloingExamples()` using `lickTab()`. Insert it into the existing box in `site/app.js`; add scoped layout rules to `site/style.css`.
 - [x] Run all six checks from `AGENTS.md`; inspect desktop and phone rendering if browser tooling is available.
-- [ ] README and handoff log updated; remote main rechecked; feature committed locally. Push, create the PR and verify mergeability after explicit user approval. The owner handles merging and publication.
+- [x] README and handoff log updated; remote main rechecked; feature pushed and PR #21 opened. The owner handles merging and publication.
 
 ## Verification and decisions
 
@@ -27,4 +27,4 @@ The pre-existing Sections header overflows at 320 pixels with fallback fonts; re
 
 Latest main was retrieved and verified, including the merged orange amp redesign (PR #19). The six required checks and the new browser checks were rerun after the review fixes.
 
-Publication handoff: automatic approval review rejected pushing the branch to the public GitHub repository, including a retry after confirming repository permissions and AGENTS.md instructions. No push, PR, merge or live deployment occurred. Explicit user approval is required to upload the completed source, tests and documentation.
+Publication handoff: the owner explicitly approved pushing the source, tests and documentation to the public Fretwise repository and opening a PR. The branch is pushed and PR #21 is open. The owner handles merging and live publication.
