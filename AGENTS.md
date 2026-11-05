@@ -75,7 +75,8 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
-- 2026-11-05 · ChatGPT · Added fine Legends tempo control (40–125%, matching playback and WAV export) and four Jam Room soloing tabs with style guidance and accessible note lists. · mchoules1993-ux/fretwise-#21 · open
+- 2026-11-05 · ChatGPT · Added sampled-guitar recordings to all four Simple Soloing Rule tabs: Play/Stop, four-beat count-in, note highlighting and WAV downloads at each written tempo. Six required checks and desktop/phone browser playback/export checks passed. · mchoules1993-ux/fretwise-#23 · open
+- 2026-11-05 · ChatGPT · Added fine Legends tempo control (40–125%, matching playback and WAV export) and four Jam Room soloing tabs with style guidance and accessible note lists. · mchoules1993-ux/fretwise-#21 · merged
 - 2026-11-05 · Claude · Restyled the whole app in the owner's orange amp look (from a Canva design): new colours, Barlow fonts, drawn line icons, faceplate panels, new home page. Colours moved from JS into CSS; new check `tests/theme.cjs`. No feature changes. · mchoules1993-ux/fretwise-#19 · merged
 - 2026-11-03 · Claude · Arranged backing tracks: light loop-safe room reverb on every stem, and a simple delta-style turnaround (root drone, upper note stepping ♭7–6–♭6–5) in the last I-chord bar of After midnight, Dusty road shuffle and Open road. Same instruments, keys, tempos and lengths; funk vamp unchanged apart from the reverb. Owner approved by ear in a listening test first. · mchoules1993-ux/fretwise-#17 · merged
 - 2026-11-03 · ChatGPT · Published `main` commit `2479cd95475cf19f853c8d233396bff2951a1ce1` to Fretwise as version 14; all five regression checks passed. · published

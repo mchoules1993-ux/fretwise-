@@ -47,6 +47,29 @@ const SOLOING_EXAMPLES=[
   tip:'Count 1 e & a throughout, including the gaps. Start on C at G5, the minor third of Am7. Keep each note short: release fretting pressure without lifting completely off the string to mute it. On the next downbeat, land on F♯ at B7, the major third of D7 and the bright sixth of A Dorian. Keep your picking hand moving evenly through the rests.',
   events:[{b:0,s:3,f:5,d:.25},{b:.75,s:2,f:5,d:.25},{b:1.5,s:1,f:5,d:.25},{b:2.75,s:2,f:8,d:.25},{b:3.5,s:2,f:5,d:.25},{b:4,s:2,f:7,d:.25},{b:4.75,s:3,f:7,d:.25},{b:5.5,s:3,f:5,d:.25},{b:6.75,s:4,f:7,d:.25},{b:7.5,s:3,f:7,d:.25}]}
 ];
-function soloingExamples(){return `<div class="soloing-examples"><h3>Try it in each style</h3><p class="tiny">Four original two-bar examples for the arranged tracks, in standard tuning. Tab bars 1–2 show the two track bars named below. These examples keep their written keys when you change a transposable loop.</p><p class="tiny">High e is the top string. Numbers are frets; h = hammer-on, b = bend to the following fret’s pitch, ~ = vibrato. The bars below each tab show note length; empty time is a rest.</p>${SOLOING_EXAMPLES.map((example,i)=>{const track=BACKING_TRACKS[i];return `<details class="soloing-example" data-soloing-example="${i}"${state.jamMode==='studio'&&state.studioTrack===i?' open':''}><summary>${example.name}</summary><p class="tiny">${track.name} · ${track.key} · ${track.bpm} BPM<br>Track bars ${example.bars.join('–')}: ${example.chords.join(' → ')} · ${example.feel}</p><p>${example.tip}</p><div class="tab-scroll">${lickTab(example,`solo-${i}`)}</div><details><summary>Notes and timing</summary>${lickNoteList(example)}</details></details>`;}).join('')}</div>`;}
+function soloingExamples(){return `<div class="soloing-examples"><h3>Try it in each style</h3><p class="tiny">Four original two-bar examples for the arranged tracks, in standard tuning. Tab bars 1–2 show the two track bars named below. These examples keep their written keys when you change a transposable loop.</p><p class="tiny">High e is the top string. Numbers are frets; h = hammer-on, b = bend to the following fret’s pitch, ~ = vibrato. The bars below each tab show note length; empty time is a rest.</p>${SOLOING_EXAMPLES.map((example,i)=>{const track=BACKING_TRACKS[i];return `<details class="soloing-example" data-soloing-example="${i}"${state.jamMode==='studio'&&state.studioTrack===i?' open':''}><summary>${example.name}</summary><p class="tiny">${track.name} · ${track.key} · ${track.bpm} BPM<br>Track bars ${example.bars.join('–')}: ${example.chords.join(' → ')} · ${example.feel}</p><p>${example.tip}</p><div class="tab-scroll">${lickTab(example,`solo-${i}`)}</div><div class="lick-actions"><button class="btn primary" data-play-solo="${i}" aria-pressed="false" aria-label="Play ${track.style} example">▶ Play example</button><button class="btn" data-stop-solo="${i}" disabled aria-label="Stop ${track.style} example">■ Stop</button><button class="btn" data-download-solo="${i}" aria-label="Download ${track.style} example audio">↓ Download audio</button><span class="tiny">Solo guitar · four-beat count-in · ${track.bpm} BPM</span></div><p class="tiny" id="solo-status-${i}" role="status">Hear the written phrase, then try it yourself.</p><details><summary>Notes and timing</summary>${lickNoteList(example)}</details></details>`;}).join('')}</div>`;}
 function studioMixControls(){return `<div class="studio-mixer" aria-label="Backing instrument levels">${['guitar','bass','drums'].map(name=>`<div class="field"><label for="mix-${name}">${name.toUpperCase()} · <span id="mix-value-${name}">${state.studioMix[name]}%</span></label><input type="range" id="mix-${name}" data-studio-mix="${name}" min="0" max="100" value="${state.studioMix[name]}"></div>`).join('')}</div>`;}
 document.addEventListener('input',e=>{const name=e.target.dataset.studioMix;if(!name)return;state.studioMix[name]=Number(e.target.value);document.getElementById(`mix-value-${name}`).textContent=`${e.target.value}%`;applyStudioMix();});
+
+function soloingRecording(index){
+ const track=BACKING_TRACKS[index];
+ return {...SOLOING_EXAMPLES[index],bpm:track.bpm,tone:['clean','warm','warm','muted'][index]};
+}
+function soloingAudioOptions(lick){return {speed:100,loop:false,backing:false,tone:lick.tone};}
+function playSoloingExample(index){
+ const lick=soloingRecording(index);
+ return playTabExample(`solo-${index}`,lick,soloingAudioOptions(lick),`[data-play-solo="${index}"]`,`[data-stop-solo="${index}"]`,message=>{
+  const output=document.getElementById(`solo-status-${index}`);if(output)output.textContent=message;
+  status(message);
+ });
+}
+function downloadSoloingExample(index,button){
+ const lick=soloingRecording(index);
+ return downloadTabExample(lick,soloingAudioOptions(lick),`fretwise-soloing-${BACKING_TRACKS[index].id}-${lick.bpm}bpm.wav`,button);
+}
+document.addEventListener('click',e=>{
+ const button=e.target.closest('button');if(!button)return;
+ if(button.dataset.playSolo!==undefined)playSoloingExample(Number(button.dataset.playSolo)).catch(audioError);
+ if(button.dataset.stopSolo!==undefined){stopAudio();status('Example stopped.');}
+ if(button.dataset.downloadSolo!==undefined)downloadSoloingExample(Number(button.dataset.downloadSolo),button);
+});
