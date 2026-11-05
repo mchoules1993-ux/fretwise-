@@ -81,11 +81,11 @@ function listenSpotMidi(spot){return LISTEN_OPEN[spot.string]+spot.fret}
 // A small fretboard (frets 0–9, high E at top) with the target position marked.
 function listenFretboard(spot){
  const left=42,top=16,cw=34,rh=18,frets=9,width=left+cw*frets+14,height=top+rh*5+30;
- let out=`<svg class="listen-board" viewBox="0 0 ${width} ${height}" role="img" aria-label="${listenSpotText(spot)}"><rect x="${left}" y="${top-6}" width="${cw*frets}" height="${rh*5+12}" rx="4" fill="#171b18"/>`;
- for(let f=0;f<=frets;f++){const x=left+f*cw;out+=`<line x1="${x}" y1="${top-6}" x2="${x}" y2="${top+rh*5+6}" stroke="${f===0?'#a3aa98':'#3e473c'}" stroke-width="${f===0?4:2}"/>`;if(f)out+=`<text x="${x-cw/2}" y="${height-4}" text-anchor="middle" fill="#9ca895" font-size="11">${f}</text>`;if([3,5,7,9].includes(f))out+=`<circle cx="${x-cw/2}" cy="${top+rh*2.5}" r="3.5" fill="#3e4939"/>`;}
- for(let row=0;row<6;row++){const s=5-row,y=top+row*rh;out+=`<text x="9" y="${y+4}" text-anchor="middle" fill="#b5c0ad" font-size="11">${['E','A','D','G','B','e'][s]}</text><line x1="${left}" y1="${y}" x2="${left+cw*frets}" y2="${y}" stroke="#6b7465" stroke-width="${.8+row*.3}"/>`;}
+ let out=`<svg class="listen-board" viewBox="0 0 ${width} ${height}" role="img" aria-label="${listenSpotText(spot)}"><rect x="${left}" y="${top-6}" width="${cw*frets}" height="${rh*5+12}" rx="4" class="fb-wood"/>`;
+ for(let f=0;f<=frets;f++){const x=left+f*cw;out+=`<line x1="${x}" y1="${top-6}" x2="${x}" y2="${top+rh*5+6}" class="${f===0?'fb-nut':'fb-fret'}" stroke-width="${f===0?4:2}"/>`;if(f)out+=`<text x="${x-cw/2}" y="${height-4}" text-anchor="middle" class="fb-fret-num" font-size="11">${f}</text>`;if([3,5,7,9].includes(f))out+=`<circle cx="${x-cw/2}" cy="${top+rh*2.5}" r="3.5" class="fb-inlay"/>`;}
+ for(let row=0;row<6;row++){const s=5-row,y=top+row*rh;out+=`<text x="9" y="${y+4}" text-anchor="middle" class="fb-string-name" font-size="11">${['E','A','D','G','B','e'][s]}</text><line x1="${left}" y1="${y}" x2="${left+cw*frets}" y2="${y}" class="fb-string" stroke-width="${.8+row*.3}"/>`;}
  const y=top+(5-spot.string)*rh,name=LISTEN_TARGETS[listen.target].name;
- out+=spot.fret===0?`<circle cx="${left-14}" cy="${y}" r="7" fill="none" stroke="var(--accent)" stroke-width="2.5"/>`:`<circle cx="${left+(spot.fret-.5)*cw}" cy="${y}" r="10" fill="var(--accent)"/><text x="${left+(spot.fret-.5)*cw}" y="${y+4}" text-anchor="middle" fill="var(--ink)" font-size="11" font-weight="700">${name}</text>`;
+ out+=spot.fret===0?`<circle cx="${left-14}" cy="${y}" r="7" class="listen-spot open" stroke-width="2.5"/>`:`<circle cx="${left+(spot.fret-.5)*cw}" cy="${y}" r="10" class="listen-spot"/><text x="${left+(spot.fret-.5)*cw}" y="${y+4}" text-anchor="middle" class="listen-spot-label" font-size="11" font-weight="700">${name}</text>`;
  return out+'</svg>';
 }
 

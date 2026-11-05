@@ -18,6 +18,13 @@ for(const route of routes){
  const direct=studio('#'+route);
  assert.equal(direct.run('state.view'),route,`Preserve #${route} deep links`);
 }
+// The orange amp home page: drawn icons, the Canva hero copy and its two calls to action.
+const homeHtml=home.element('main').innerHTML;
+assert.doesNotMatch(homeHtml,/[▦♬⇄◈▶♫♩★◉☷]/,'Home uses drawn icons, not symbol characters');
+assert.match(homeHtml,/Find the notes\. Make it music\./);
+assert.match(homeHtml,/href="#jam"[^>]*>Open the jam room</);
+assert.match(homeHtml,/href="#scales"[^>]*>Explore the fretboard</);
+assert.ok((homeHtml.match(/class="icon"/g)||[]).length>=10,'One icon per section card');
 assert.equal(studio('#unknown').run('state.view'),'home');
 assert.equal(studio('#constructor').run('state.view'),'home','Prototype properties are not routes');
 home.run('globalThis.audioStops=0;globalThis.micStops=0;stopAudio=()=>audioStops++;stopListening=()=>micStops++;');
