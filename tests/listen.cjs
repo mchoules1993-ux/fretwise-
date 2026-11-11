@@ -62,4 +62,42 @@ assert.equal(feed(judgeFor(9),repeat(quiet,10)).result,'waiting');
  assert.ok(html.includes(run(`listenSpotText(${JSON.stringify(s)})`)));assert.match(html,/not recorded or uploaded/);}
 // A new target is never the same note twice in a row.
 for(let i=0;i<30;i++){const before=targets[run('listen.target')].pc;run(`listenPick(${before})`);assert.notEqual(targets[run('listen.target')].pc,before);}
-console.log('Listening checks passed: 74 pitch tests, judge rules and the practice page.');
+// ---- Tuner (standard tuning) ----
+const strings=JSON.parse(run('JSON.stringify(TUNER_STRINGS)')),reading=m=>JSON.parse(run(`JSON.stringify(tunerReading(${m}))`));
+assert.deepEqual(strings.map(s=>s.midi),OPEN,'Standard tuning: E2 A2 D3 G3 B3 E4');
+// Each open string, exactly in tune, is found and marked in tune.
+strings.forEach((s,i)=>{const r=reading(s.midi);assert.equal(r.string,i);assert.equal(r.cents,0);assert.equal(r.advice,'in tune');});
+// Within 5 cents counts as in tune; further out says which way to turn.
+assert.equal(reading(45.05).advice,'in tune');assert.equal(reading(44.95).advice,'in tune');
+{const r=reading(40-.3);assert.equal(r.string,0);assert.equal(r.cents,-30);assert.equal(r.advice,'tighten');}
+{const r=reading(55+.2);assert.equal(r.string,3);assert.equal(r.cents,20);assert.equal(r.advice,'loosen');}
+// A string tuned well down (low E dropped to D) is still read as that string, not a neighbour.
+{const r=reading(38);assert.equal(r.string,0);assert.equal(r.cents,-200);assert.equal(r.advice,'tighten');}
+// G to B is four frets, other gaps five: a note just below B belongs to B.
+assert.equal(reading(58).string,4);assert.equal(reading(56).string,3);
+// Far outside the open strings, it says so instead of guessing a string.
+assert.equal(reading(33).advice,'too low');assert.equal(reading(72).advice,'too high');
+// The smoother: a steady middle value, a reset for each new string, nothing in silence.
+{const smooth=run('createTunerSmoother()'),n=midi=>({kind:'note',midi});let out;
+ [45.1,45.3,45.1,45.12,45.11].forEach((m,i)=>{out=smooth(n(m),i*40);});
+ assert.ok(Math.abs(out-45.11)<.001,`median expected 45.11, got ${out}`);
+ assert.ok(Math.abs(smooth(n(50.2),240)-50.2)<.001,'A different string starts fresh');
+ assert.ok(Math.abs(smooth({kind:'unclear'},280)-50.2)<.001,'One unclear frame keeps the reading');
+ assert.equal(smooth({kind:'quiet'},320),null,'Silence clears the reading');}
+// End to end: a plucked string that is a little out is heard on the right string, to within 3 cents.
+for(const [midi,off] of [[40,-12],[45,8],[50,-25],[55,15],[59,-4],[64,30]]){
+ const f=detect(pluck(midi+off/100,48000),48000),r=reading(f.midi);
+ assert.equal(r.string,OPEN.indexOf(midi));assert.ok(Math.abs(r.cents-off)<=3,`string ${midi}: wanted ${off} cents, read ${r.cents}`);}
+// Even with a weak fundamental (small phone microphones), the low E string stays the low E string.
+{const f=detect(pluck(40-.1,48000,{harmonics:[.2,1,.6,.3,.15]}),48000);assert.equal(reading(f.midi).string,0);}
+// The tuner page: a mode switch, six reference strings, the needle and the shared controls.
+run("listenSetMode('tune')");
+{const html=run('listenView()');
+ assert.match(html,/data-listen-mode="tune"[^>]*aria-pressed="true"/);assert.match(html,/data-listen-mode="note"[^>]*aria-pressed="false"/);
+ assert.equal((html.match(/data-tuner-ref=/g)||[]).length,6);
+ assert.match(html,/aria-label="Hear the low E string \(E2\)"/);assert.match(html,/aria-label="Hear the A string \(A2\)"/);
+ for(const id of ['tuner-needle','tuner-string','tuner-cents','listen-toggle','listen-message','listen-level'])assert.match(html,new RegExp(`id="${id}"`));
+ assert.doesNotMatch(html,/id="listen-target"/,'The note game is hidden while tuning');assert.match(html,/not recorded or uploaded/);}
+run("listenSetMode('note')");assert.match(run('listenView()'),/id="listen-target"/,'Switching back shows the note game');
+run("listenSetMode('nonsense')");assert.equal(run('listen.mode'),'note','Unknown modes are ignored');
+console.log('Listening checks passed: 74 pitch tests, judge rules, the practice page and the tuner.');
