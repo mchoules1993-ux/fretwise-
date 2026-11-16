@@ -612,3 +612,81 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
 .soloing-example summary{font-weight:600}
 .soloing-example .tab-scroll{margin-top:16px}
 @media(max-width:600px){.soloing-example .tab-scroll{overflow:visible}}
+
+/* Practice path: the path page, the wide home card and the coach bar above a lesson. */
+/* Ticking a step redraws the page; without this every panel would fade in again on each tick. */
+.path-next,.path-stage,.path-how{animation:none}
+.path-goal{color:var(--ink)}
+.path-meter{height:12px;border:1.5px solid var(--ink);border-radius:3px;background:#fffaee;overflow:hidden}
+.path-meter i{display:block;height:100%;background:var(--orange)}
+.path-strip{display:flex;align-items:center;justify-content:space-between;gap:14px 28px;flex-wrap:wrap;padding:16px 0 18px;background:var(--black);color:var(--cream);box-shadow:0 0 0 100vmax var(--black);clip-path:inset(0 -100vmax)}
+.path-strip-text{min-width:0;flex:1 1 420px}
+.path-strip .eyebrow{display:block;color:var(--gold)}
+.path-strip-title{display:block;font-family:var(--display);font-size:24px;line-height:1.15;margin:4px 0 6px}
+.path-strip p{margin:0;max-width:80ch;font-size:15px;color:var(--cream-dim)}
+.path-strip .path-goal{margin-top:5px;color:var(--cream)}
+.path-strip-actions{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap}
+.path-strip .text-link{color:var(--gold)}
+.path-strip :focus-visible{outline-color:var(--gold)}
+.path-strip-end{margin-top:34px}
+.path-strip-end .path-goal{margin-top:6px}
+.path-next{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(250px,1fr);gap:26px 36px;align-items:start}
+.path-next h2{font-size:clamp(1.8rem,2.6vw,2.3rem);line-height:1.1;margin:8px 0 12px}
+.path-next-main p{max-width:64ch;font-size:16px;margin-bottom:10px}
+.path-next-main .lick-actions{margin-top:20px}
+.path-summary{border-left:1.5px solid var(--ink);padding-left:30px}
+.path-count{display:block;font-family:var(--display);font-size:60px;font-weight:700;line-height:1;color:var(--orange-deep);margin:4px 0 12px}
+.path-count small{font-family:var(--body);font-size:15px;font-weight:600;color:var(--ink-soft)}
+.path-summary .tiny{margin:9px 0 18px}
+.path-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;list-style:none;padding:0;margin:9px 0 0}
+.path-days li{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--ink-soft)}
+.path-days i{width:18px;height:18px;border:1.5px solid var(--ink);border-radius:50%}
+.path-days .practised i{background:var(--orange-deep);box-shadow:inset 0 0 0 3px var(--paper)}
+.path-days .today span{color:var(--ink)}
+.path-stages .home-group-heading{margin-top:38px}
+.path-stage{padding:0;border-bottom:1.5px solid var(--ink);margin-bottom:14px}
+.path-stage summary{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;list-style:none}
+.path-stage summary::-webkit-details-marker{display:none}
+.path-stage-title{position:relative;display:block;min-width:0;padding-left:28px}
+.path-stage-title::before{content:"";position:absolute;left:2px;top:30px;width:9px;height:9px;border-right:2.5px solid var(--ink);border-bottom:2.5px solid var(--ink);transform:rotate(-45deg)}
+.path-stage[open] .path-stage-title::before{transform:rotate(45deg);top:27px}
+.path-stage h3{font-size:25px;margin:2px 0}
+.path-stage summary small{display:block;font-size:14px;color:var(--ink-soft)}
+.path-stage.complete .badge{background:var(--ink);color:var(--cream)}
+.path-steps{list-style:none;margin:0;padding:0;border-top:1.5px solid var(--ink)}
+.path-step{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:8px 18px;align-items:start;padding:18px 22px;border-top:1px solid var(--rule)}
+.path-step:first-child{border-top:0}
+.path-step.next{background:#fffaee;box-shadow:inset 6px 0 0 var(--orange)}
+.path-step h4{font-family:var(--display);font-size:22px;font-weight:700;line-height:1.2;margin:3px 0 6px}
+.path-step p{font-size:15px;margin:0 0 6px;max-width:72ch}
+.path-step.done h4,.path-step.done .path-goal{color:var(--ink-soft)}
+.path-step .btn{align-self:center;white-space:nowrap}
+.path-check{display:grid;place-items:center;width:44px;height:44px;padding:0;border:1.5px solid var(--ink);border-radius:4px;background:#fffaee;font-size:24px;font-weight:700;line-height:1}
+.path-check[aria-pressed="true"]{background:var(--ink);color:var(--cream)}
+.path-how{margin-top:30px}
+.path-foot{margin:-6px 0 20px}
+.path-foot p{margin:0 0 8px}
+.path-reset{font-size:14px;color:var(--ink)}
+.path-reset .text-link{font-size:14px}
+.path-reset .btn{margin:6px 6px 0 0}
+.path-home{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 30px;align-items:center;padding:22px 24px}
+.path-home-text{display:flex;gap:14px;align-items:flex-start;min-width:0}
+.path-home .home-card-icon{margin-top:4px}
+.path-home h3{font-size:26px;line-height:1.15;margin:0 0 4px}
+.path-home p{margin:0;font-size:16px}
+.path-home .path-meter{grid-column:1/-1;grid-row:2}
+.path-home .lick-actions{gap:12px 22px}
+@media(max-width:860px){
+  .path-next{grid-template-columns:minmax(0,1fr)}
+  .path-summary{border-left:0;border-top:1.5px solid var(--ink);padding:22px 0 0}
+  .path-home{grid-template-columns:minmax(0,1fr)}
+  .path-home .path-meter{grid-row:auto}
+}
+@media(max-width:600px){
+  .path-strip{padding:14px 0 16px}
+  .path-strip-title{font-size:21px}
+  .path-stage summary{padding:16px}
+  .path-step{grid-template-columns:44px minmax(0,1fr);padding:16px;gap:8px 14px}
+  .path-step .btn{grid-column:2;justify-self:start}
+  .path-count{font-size:48px}
+}

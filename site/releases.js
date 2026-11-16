@@ -1,6 +1,15 @@
 'use strict';
 // User-facing inventory of implemented capabilities. Keep this list current when shipping features.
 const FEATURE_CATALOGUE=[
+ {view:'path',title:'Practice path',description:'Know what to practise next, and see how far you have come.',items:[
+ '24 short steps in six stages, from tuning up to a first solo over a backing track, then on to new scales and Legends studies.',
+ 'Each step says what to do, how long it takes and how to tell when it is done.',
+ 'Opening a step sets up its lesson for you: the right scale, chord progression, rhythm pattern, lick speed or backing track.',
+ 'A bar above and below the lesson shows the current step, with Done · next step and a link back to the path.',
+ 'Tick steps yourself; see the next step, the steps done, the practice time left and the days practised in the last seven.',
+ 'Progress is saved in your browser on your device only. Nothing is uploaded, and you can clear it at any time.',
+ 'Home shows a Start or Continue button for the next step.'
+ ]},
  {view:'scales',title:'Scale explorer',description:'See, hear and play the notes in a scale.',items:[
  'All 12 root notes, with key-aware note spelling and a choice of note names or scale degrees.',
  'Seven major-scale modes, major and minor pentatonic, minor blues and harmonic minor: 11 scale choices.',
@@ -82,7 +91,7 @@ const FEATURE_CATALOGUE=[
  'Audio starts after a user action and stops when changing sections, hiding the page or leaving it.'
  ]},
  {title:'Navigation & access',description:'Features that make the studio usable on different devices.',items:[
- 'Homepage cards for all ten sections, an independently scrolling desktop sidebar and a Sections side panel on phones and narrow windows.',
+ 'A homepage practice path card and cards for all ten sections, an independently scrolling desktop sidebar and a Sections side panel on phones and narrow windows.',
  'Direct section links, browser Back/Forward, a current-section breadcrumb and highlighted navigation. The phone menu supports Escape, keyboard focus and touch dismissal.',
  'Skip-to-lesson link, visible keyboard focus, accessible diagram labels and playback status announcements.',
  'Reduced-motion support and text note lists alongside visual tabs.',

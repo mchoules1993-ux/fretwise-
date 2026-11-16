@@ -2,6 +2,7 @@
 
 // Shared order and grouping for the homepage and section menu.
 const SECTION_GROUPS = [
+ {title:'Start here',description:'Not sure what to practise? Follow the path, one short step at a time.',sections:['path']},
  {title:'Explore the theory',description:'Find the notes and understand how they fit.',sections:['scales','harmony','progressions','modes']},
  {title:'Pick up your guitar',description:'Put an idea into your hands, your ears and your playing.',sections:['jam','licks','rhythm','legends','listen']},
  {title:'Inside the studio',description:'See everything you can use in Fretwise.',sections:['releases']}
@@ -10,6 +11,7 @@ const SECTION_GROUPS = [
 // Simple drawn line icons, one per section (24×24, stroked in the current text colour).
 const ICONS = {
  home:'<path d="M3.5 11 12 4l8.5 7M6 9.5V20h12V9.5"/>',
+ path:'<circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M7 19h7.5a3.5 3.5 0 0 0 0-7h-5a3.5 3.5 0 0 1 0-7H17"/>',
  scales:'<circle cx="5" cy="18" r="1.8"/><circle cx="10" cy="14" r="1.8"/><circle cx="15" cy="10" r="1.8"/><circle cx="20" cy="6" r="1.8"/>',
  harmony:'<circle cx="12" cy="5.5" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="18.5" r="2.4"/>',
  progressions:'<path d="M5.5 14a7 7 0 1 0 1.6-6.5"/><path d="M6 3.5V8h4.5"/>',
@@ -36,8 +38,9 @@ function heroBoard(){
  return out+'</svg>';
 }
 
+// The 'Start here' group shows the practice path as one wide card with the player's progress.
 function homeView(){
- return `<section class="home-intro"><div class="home-hero-text"><h1>Find the notes. Make it music.</h1><p>Fretwise is a free guitar theory practice app. Learn the fretboard, hear how harmony works, and turn practice into playing.</p><div class="home-actions"><a class="btn primary" href="#jam" data-view="jam">Open the jam room</a><a class="text-link" href="#scales" data-view="scales">Explore the fretboard</a></div></div><figure class="faceplate home-plate"><span class="screw" aria-hidden="true"></span><span class="screw" aria-hidden="true"></span><span class="screw" aria-hidden="true"></span><span class="screw" aria-hidden="true"></span>${heroBoard()}<figcaption>A minor pentatonic, fifth position. Orange notes are the root.</figcaption></figure></section><div class="home-facts"><span>Free to use</span><span>Learn by ear</span><span>Built for guitarists</span></div>${SECTION_GROUPS.map(group=>`<section class="home-group" aria-label="${group.title}"><div class="home-group-heading"><h2>${group.title}</h2><p>${group.description}</p></div><div class="home-grid">${group.sections.map(view=>{const [,title,,description]=VIEWS[view];return `<a class="home-card" href="#${view}" data-view="${view}"><span class="home-card-top"><span class="home-card-icon">${icon(view)}</span></span><h3>${title}</h3><p>${description}</p></a>`;}).join('')}</div></section>`).join('')}`;
+ return `<section class="home-intro"><div class="home-hero-text"><h1>Find the notes. Make it music.</h1><p>Fretwise is a free guitar theory practice app. Learn the fretboard, hear how harmony works, and turn practice into playing.</p><div class="home-actions"><a class="btn primary" href="#jam" data-view="jam">Open the jam room</a><a class="text-link" href="#scales" data-view="scales">Explore the fretboard</a></div></div><figure class="faceplate home-plate"><span class="screw" aria-hidden="true"></span><span class="screw" aria-hidden="true"></span><span class="screw" aria-hidden="true"></span><span class="screw" aria-hidden="true"></span>${heroBoard()}<figcaption>A minor pentatonic, fifth position. Orange notes are the root.</figcaption></figure></section><div class="home-facts"><span>Free to use</span><span>Learn by ear</span><span>Built for guitarists</span></div>${SECTION_GROUPS.map(group=>`<section class="home-group" aria-label="${group.title}"><div class="home-group-heading"><h2>${group.title}</h2><p>${group.description}</p></div>${group.sections.includes('path')?pathHomeCard():`<div class="home-grid">${group.sections.map(view=>{const [,title,,description]=VIEWS[view];return `<a class="home-card" href="#${view}" data-view="${view}"><span class="home-card-top"><span class="home-card-icon">${icon(view)}</span></span><h3>${title}</h3><p>${description}</p></a>`;}).join('')}</div>`}</section>`).join('')}`;
 }
 
 let sectionMenu = null;

@@ -18,6 +18,7 @@ Fretwise is an interactive guitar theory studio for learning scales, modes, harm
 - Legends: ten distinct phrasing studies (five foundations and five faster studies at 112–140 BPM) for SRV, Hendrix, Page, Clapton and Moore, including three adapted public-domain motifs, song-study links, shuffle/triplet/sixteenth timing, appropriate backing, and a 40–125% tempo slider with live BPM and matching WAV exports
 - Four original two-bar Jam Room soloing tabs for slow minor blues, Texas shuffle, driving blues-rock and clean funk, with counting, technique tips, chord-tone targets, accessible note lists and playable solo-guitar demos. Each demo has a four-beat count-in, synchronized tab highlighting, Stop and WAV download at its written tempo
 - Four original arranged backing tracks with synchronized guitar/bass/drum stems, live mixer, count-in, MP3 downloads and chord-following note guides
+- Practice path: 24 short steps in six stages, from tuning up to a first solo. Each step opens its lesson already set up, with a bar that says what to do and when it is done. Progress, practice time left and days practised are saved in the browser only
 - Home: cards for every section; vertically scrolling desktop sidebar and a Sections side panel for phones and narrow windows, with keyboard focus handling and browser Back/Forward
 - Fretwise listens (trial): a standard-tuning tuner that finds the string you play and shows how many cents flat or sharp it is, with tap-to-hear reference strings; plus a note game that asks for A, C or E and listens through the microphone
 - Release list: complete implemented-feature catalogue, section links and release history
@@ -55,6 +56,14 @@ All newly bundled sample libraries are CC0; source licenses are retained alongsi
 The bass library uses transposing key labels; preparation maps its B1-labelled sample
 (which sounds at approximately 31 Hz) to MIDI 23, B0.
 Arranged backings have fixed key/tempo; transposable loops remain available separately.
+
+## Practice path checks
+
+```bash
+node tests/path.cjs
+```
+
+Checks that all 24 steps open real lessons in the state their text describes (and that the buttons, licks, chords and frets they name exist), plus progress, saving, damaged or blocked browser storage, the coach bar, the path page and the home card. Step ids in `site/path.js` are saved in players' browsers: do not rename them.
 
 ## Navigation checks
 

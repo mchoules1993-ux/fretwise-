@@ -59,6 +59,7 @@ node tests/chord-shapes.cjs
 node tests/listen.cjs
 node tests/navigation.cjs
 node tests/theme.cjs
+node tests/path.cjs
 ```
 
 ## Publishing the live site
@@ -75,7 +76,8 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
-- 2026-11-11 · Claude · Added a tuner to “Fretwise listens” (a Find the note / Tuner switch): standard tuning only, finds the open string you play, shows a needle and cents flat/sharp, says tighten or loosen, and has six tap-to-hear reference strings. Reuses the existing pitch detector. New tuner checks in `tests/listen.cjs`; all six checks passed, plus desktop and phone browser runs with a fake microphone. · mchoules1993-ux/fretwise-#24 · open
+- 2026-11-16 · Claude · Added the Practice path: 24 short steps in six stages, from tuning up to a first solo. Each step opens its lesson already set up; a bar above and below the lesson has “Done · next step”. Progress is saved in the browser only. New Home card, first item in the section menu, and new required check `tests/path.cjs`. Step ids in `site/path.js` are saved in players’ browsers, so don’t rename them. · mchoules1993-ux/fretwise-#25 · open
+- 2026-11-11 · Claude · Added a tuner to “Fretwise listens” (a Find the note / Tuner switch): standard tuning only, finds the open string you play, shows a needle and cents flat/sharp, says tighten or loosen, and has six tap-to-hear reference strings. Reuses the existing pitch detector. New tuner checks in `tests/listen.cjs`; all six checks passed, plus desktop and phone browser runs with a fake microphone. · mchoules1993-ux/fretwise-#24 · merged
 - 2026-11-05 · ChatGPT · Added sampled-guitar recordings to all four Simple Soloing Rule tabs: Play/Stop, four-beat count-in, note highlighting and WAV downloads at each written tempo. Six required checks and desktop/phone browser playback/export checks passed. · mchoules1993-ux/fretwise-#23 · merged
 - 2026-11-05 · ChatGPT · Added fine Legends tempo control (40–125%, matching playback and WAV export) and four Jam Room soloing tabs with style guidance and accessible note lists. · mchoules1993-ux/fretwise-#21 · merged
 - 2026-11-05 · Claude · Restyled the whole app in the owner's orange amp look (from a Canva design): new colours, Barlow fonts, drawn line icons, faceplate panels, new home page. Colours moved from JS into CSS; new check `tests/theme.cjs`. No feature changes. · mchoules1993-ux/fretwise-#19 · merged
