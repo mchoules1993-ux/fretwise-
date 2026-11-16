@@ -59,6 +59,7 @@ node tests/chord-shapes.cjs
 node tests/listen.cjs
 node tests/navigation.cjs
 node tests/theme.cjs
+node tests/path.cjs
 ```
 
 ## Publishing the live site
