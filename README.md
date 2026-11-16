@@ -19,6 +19,7 @@ Fretwise is an interactive guitar theory studio for learning scales, modes, harm
 - Four original two-bar Jam Room soloing tabs for slow minor blues, Texas shuffle, driving blues-rock and clean funk, with counting, technique tips, chord-tone targets, accessible note lists and playable solo-guitar demos. Each demo has a four-beat count-in, synchronized tab highlighting, Stop and WAV download at its written tempo
 - Four original arranged backing tracks with synchronized guitar/bass/drum stems, live mixer, count-in, MP3 downloads and chord-following note guides
 - Home: cards for every section; vertically scrolling desktop sidebar and a Sections side panel for phones and narrow windows, with keyboard focus handling and browser Back/Forward
+- Fretwise listens (trial): a standard-tuning tuner that finds the string you play and shows how many cents flat or sharp it is, with tap-to-hear reference strings; plus a note game that asks for A, C or E and listens through the microphone
 - Release list: complete implemented-feature catalogue, section links and release history
 - Persistent audio Stop/status, audio-clock lick loops, readable phone beat panels, responsive layouts, keyboard access and optional browser-assistant scale setup
 

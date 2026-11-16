@@ -473,9 +473,30 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
 .listen-message{color:var(--ink);min-height:3.2em}
 .listen-card.match .listen-message{color:var(--ink);font-weight:700}
 .listen-card.miss .listen-message{color:var(--orange-deep);font-weight:600}
+/* Tuner (inside Fretwise listens) */
+.listen-modes{display:inline-flex;margin:0 0 18px}
+.tuner-gauge{position:relative;height:56px;margin:14px 0 6px;background:#fffaee;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden}
+.tuner-zone{position:absolute;top:0;bottom:0;left:45%;width:10%;background:var(--cream-lo)}
+.tuner-gauge.in-tune .tuner-zone{background:var(--gold)}
+.tuner-tick{position:absolute;bottom:0;width:2px;height:14px;margin-left:-1px;background:var(--ink-soft)}
+.tuner-tick.centre{height:100%;background:var(--ink)}
+.tuner-needle{position:absolute;top:6px;bottom:6px;width:6px;margin-left:-3px;border-radius:3px;background:var(--orange-deep);transition:left .12s ease-out,opacity .3s ease}
+.tuner-gauge.in-tune .tuner-needle{background:var(--ink)}
+.tuner-gauge.idle .tuner-needle{opacity:.3}
+.tuner-scale{display:flex;justify-content:space-between;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:14px}
+#tuner-heard{display:block;margin-top:2px}
+.tuner-strings-title{display:block;margin-top:18px}
+.tuner-strings{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
+.tuner-string{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 4px;min-height:56px}
+.tuner-string b{font-family:var(--display);font-size:24px;line-height:1}
+.tuner-string small{font-size:12px;color:var(--ink-soft)}
+.tuner-string.selected{background:var(--ink);color:var(--cream);border-color:var(--ink)}
+.tuner-string.selected small{color:var(--cream-dim)}
 @media(max-width:600px){
   .listen-readout strong{font-size:22px;min-width:0}
   .listen-card .lick-actions .btn{flex:1 1 130px}
+  .tuner-strings{gap:5px}
+  .tuner-string b{font-size:20px}
 }
 /* Studio navigation: dark grille sidebar; the section list owns its scrolling. */
 .sidebar{position:fixed;inset:0 auto 0 0;width:248px;height:100vh;height:100dvh;display:flex;flex-direction:column;color:var(--cream);border-right:1px solid #000;z-index:1000;padding:24px 14px 12px}

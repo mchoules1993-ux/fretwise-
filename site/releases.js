@@ -65,7 +65,9 @@ const FEATURE_CATALOGUE=[
  'Readable beat panels on phones; synchronized highlighting, count-in, slower playback, loop gaps, appropriate A7/A-minor backing, tone and WAV downloads.'
 
  ]},
- {view:'listen',title:'Fretwise listens',description:'Trial: play a note and the app hears it.',items:[
+ {view:'listen',title:'Fretwise listens',description:'Trial: tune your guitar, or play a note and the app hears it.',items:[
+ 'A tuner for standard tuning (E A D G B E): finds the open string you play, shows a needle and how many cents flat or sharp it is, and says when to tighten or loosen.',
+ 'Tap any of the six strings in the tuner to hear its reference note.',
  'Asks for A, C or E and shows where to play it on a small fretboard; any octave counts.',
  'Listens through the microphone with phone voice processing switched off, and shows the note it heard and how in tune it is.',
  'Confirms a match once the note is held; says when it can’t hear clearly instead of marking you wrong.',
