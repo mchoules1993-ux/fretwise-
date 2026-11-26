@@ -21,6 +21,7 @@ Fretwise is an interactive guitar theory studio for learning scales, modes, harm
 - Practice path: 24 short steps in six stages, from tuning up to a first solo. Each step opens its lesson already set up, with a bar that says what to do and when it is done. Progress, practice time left and days practised are saved in the browser only
 - Home: cards for every section; vertically scrolling desktop sidebar and a Sections side panel for phones and narrow windows, with keyboard focus handling and browser Back/Forward
 - Fretwise listens (trial): a standard-tuning tuner that finds the string you play and shows how many cents flat or sharp it is, with tap-to-hear reference strings; plus a note game that asks for A, C or E and listens through the microphone
+- Metronome: a button in the audio bar on every page. 40–220 BPM with –/+, slider and tap tempo; time signatures 2/4, 3/4, 4/4, 5/4, 6/8, 7/8 and 12/8 with accented beat 1 and beat lights. It keeps going across sections and stops when anything else plays. Tempo and time signature are saved in the browser only
 - Release list: complete implemented-feature catalogue, section links and release history
 - Persistent audio Stop/status, audio-clock lick loops, readable phone beat panels, responsive layouts, keyboard access and optional browser-assistant scale setup
 

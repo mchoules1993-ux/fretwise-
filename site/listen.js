@@ -251,6 +251,8 @@ function releaseListenSession(session){
 
 async function startListening(){
  if(listen.active||listen.starting)return;
+ // The click would be heard by the microphone. (listen.js is also tested on its own, without it.)
+ if(typeof stopMetronome==='function')stopMetronome();
  if(!window.isSecureContext){listenSay('The microphone only works on a secure (https) page. Open the live Fretwise site to try this.','unclear');return;}
  const C=window.AudioContext||window.webkitAudioContext;
  if(!navigator.mediaDevices?.getUserMedia||!C){listenSay('This browser can’t use the microphone. Try an up-to-date Safari or Chrome.','unclear');return;}
