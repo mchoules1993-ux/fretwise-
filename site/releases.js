@@ -83,12 +83,20 @@ const FEATURE_CATALOGUE=[
  'Hear the target note through headphones, skip to a new note, and see how many you matched first time.',
  'Sound is analysed on your device only. Nothing is recorded or uploaded.'
  ]},
+ {title:'Metronome',description:'A steady click for practising scales, and songs with no backing track.',items:[
+ 'Open it from the Metronome button in the audio bar at the bottom of every page.',
+ 'Tempo from 40 to 220 BPM with – and + buttons, a slider and tap tempo.',
+ 'Time signatures 2/4, 3/4, 4/4, 5/4, 6/8, 7/8 and 12/8. Beat 1 is accented, and each group in 6/8, 7/8 and 12/8 has a lighter accent.',
+ 'A light for each click shows where you are in the bar.',
+ 'It keeps going when you change section or key, and stops when you play anything else or press Stop audio.',
+ 'Your last tempo and time signature are remembered in your browser on this device.'
+ ]},
  {title:'Sound engine',description:'The audio tools used across the studio.',items:[
  '150 bundled CC0 samples: 82 guitar, 36 bass and 32 drum samples. Instrument banks load separately; sound credits and source licenses are retained.',
  'Amp and cabinet EQ, warm-crunch drive, compression, sustain and delay for expressive lick playback.',
  'Soft/hard note layers, alternating recorded takes and real guitar release sounds, plus rendered bends, vibrato, slides, softer legato attacks and simultaneous notes.',
  'Tempo changes preserve pitch; lick WAV exports include the count-in, selected sound, optional backing and delay tail.',
- 'Audio starts after a user action and stops when changing sections, hiding the page or leaving it.'
+ 'Audio starts after a user action and stops when changing sections, hiding the page or leaving it. The metronome is the one exception to changing sections: it keeps going.'
  ]},
  {title:'Navigation & access',description:'Features that make the studio usable on different devices.',items:[
  'A homepage practice path card and cards for all ten sections, an independently scrolling desktop sidebar and a Sections side panel on phones and narrow windows.',

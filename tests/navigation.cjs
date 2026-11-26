@@ -6,7 +6,7 @@ function studio(hash=''){
  const element=id=>{if(!elements.has(id))elements.set(id,{innerHTML:'',textContent:'',disabled:false,dataset:{},classList:{remove(){},toggle(){}},setAttribute(){},removeAttribute(){},focus(){this.focused=true;}});return elements.get(id);};
  const events={},visits=[];
  const c=vm.createContext({console,Math,Float32Array,Uint8Array,Map,Set,URL,Blob,window:{addEventListener:(name,fn)=>events[name]=fn,scrollTo(){}},document:{hidden:false,body:element('body'),getElementById:element,querySelectorAll:()=>[],querySelector:()=>null,addEventListener(){}},location:{hash},history:{replaceState(_s,_t,h){c.location.hash=h;},pushState(_s,_t,h){visits.push(h);c.location.hash=h;}},setTimeout,clearTimeout,requestAnimationFrame:()=>0,cancelAnimationFrame(){}});
- for(const f of ['sampled-audio','backing','licks','rhythm','releases','chords','listen','path',...(fs.existsSync('site/navigation.js')?['navigation']:[]),'app'])vm.runInContext(fs.readFileSync(`site/${f}.js`,'utf8'),c,{filename:f});
+ for(const f of ['sampled-audio','backing','licks','rhythm','releases','chords','listen','path','metronome',...(fs.existsSync('site/navigation.js')?['navigation']:[]),'app'])vm.runInContext(fs.readFileSync(`site/${f}.js`,'utf8'),c,{filename:f});
  return {c,element,events,visits,run:code=>vm.runInContext(code,c)};
 }
 

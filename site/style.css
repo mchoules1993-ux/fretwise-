@@ -377,6 +377,30 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
 .audio-transport span{font-size:14px;color:var(--cream);overflow-wrap:anywhere;min-width:0}
 .audio-transport .btn{flex-shrink:0;min-height:44px}
 .audio-transport .btn:disabled{cursor:default}
+/* Metronome: a button in the audio bar opens a panel that sits just above the bar. */
+.transport-actions{display:flex;gap:10px;flex-shrink:0}
+.audio-transport .btn.metro-on{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.metro-panel{position:absolute;right:16px;bottom:calc(100% + 3px);width:min(440px,calc(100vw - 32px));max-height:calc(100vh - 150px);overflow:auto;padding:14px 18px 16px;border:2px solid var(--gold);border-bottom:0;border-radius:6px 6px 0 0;display:flex;flex-direction:column;gap:12px;background-color:var(--black);background-image:repeating-linear-gradient(45deg,var(--grille) 0 1.5px,transparent 1.5px 5px),repeating-linear-gradient(-45deg,var(--grille) 0 1.5px,transparent 1.5px 5px)}
+.metro-panel[hidden]{display:none}
+.metro-panel .eyebrow{color:var(--gold)}
+.metro-panel .tiny{color:var(--cream-dim);margin:0}
+.metro-panel .field label{color:var(--cream)}
+.metro-head{display:flex;align-items:center;justify-content:space-between}
+.metro-tempo{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.audio-transport .metro-step{width:52px;min-height:52px;padding:0;font-size:26px;line-height:1}
+.metro-readout{display:flex;align-items:baseline;gap:8px;color:var(--cream)}
+.metro-readout output{font-family:var(--display);font-size:52px;font-weight:700;line-height:1;min-width:3ch;text-align:right}
+.metro-panel input[type=range]{width:100%;accent-color:var(--gold);min-height:32px}
+.metro-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px}
+.metro-row .field{min-width:110px}
+.metro-row #metro-start{flex:1;min-width:110px}
+.metro-lights{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-height:34px}
+.metro-lights i{display:grid;place-items:center;width:24px;height:24px;border:2px solid var(--cream-dim);border-radius:50%;font-style:normal}
+.metro-lights i.strong{width:34px;height:34px;border-color:var(--gold)}
+.metro-lights i.medium{width:29px;height:29px;border-color:var(--gold)}
+.metro-lights b{font-size:11px;color:var(--cream)}
+.metro-lights i.on{background:var(--gold);border-color:var(--gold)}
+.metro-lights i.on b{color:var(--ink)}
 .mobile-tabs{display:none}
 .beat-tile{min-width:0;border:1.5px solid var(--ink);border-radius:4px;background:var(--paper);overflow:hidden}
 .beat-tile>span{display:block;padding:8px 12px;color:var(--orange-deep);font-size:12px;font-weight:600;border-bottom:1px solid var(--rule)}
@@ -395,6 +419,14 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
 @media(max-width:760px){
   .audio-transport{left:0;padding-inline:14px;gap:10px}
   .audio-transport span{font-size:13px}
+  .metro-panel{left:8px;right:8px;width:auto;padding:12px 14px 14px;gap:10px;max-height:calc(100vh - 175px);max-height:calc(100dvh - 175px)}
+  .metro-panel .metro-note{display:none}
+  .metro-row{flex-wrap:nowrap}
+  .metro-row .field{min-width:0;flex:0 1 92px}
+  .metro-row .field select{width:100%;padding-right:24px}
+  .metro-row #metro-tap{flex:0 1 auto;padding-inline:12px}
+  .metro-row #metro-start{min-width:0}
+  .metro-readout output{font-size:44px}
   .workspace,main,.panel,.panel-head>div{min-width:0}
   .field select,.field input{min-height:44px}
   .btn,.btn.small{min-height:44px;touch-action:manipulation}
@@ -419,6 +451,14 @@ body{padding-bottom:calc(85px + env(safe-area-inset-bottom,0px))}
   .audio-transport .btn{padding-inline:12px}
   .panel{overflow-wrap:anywhere}
   .beat-tile svg{min-width:0}
+}
+/* Narrow phones: the status line gets its own row above the two transport buttons. */
+@media(max-width:480px){
+  body{padding-bottom:calc(122px + env(safe-area-inset-bottom,0px))}
+  .audio-transport{flex-wrap:wrap;row-gap:6px;padding-top:8px}
+  .audio-transport>span{flex:1 0 100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal}
+  .transport-actions{flex:1 0 100%}
+  .transport-actions .btn{flex:1 1 0;min-width:0;white-space:nowrap}
 }
 .studio-mixer{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin:18px 0 8px;padding:18px;border:1.5px solid var(--ink);border-radius:4px;background:var(--cream-lo)}
 .studio-mixer .field{min-width:0}
