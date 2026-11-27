@@ -6,13 +6,7 @@ const RHYTHM_VALUES=[
  {key:'eighth',name:'Eighth note',uk:'quaver',beats:.5,den:8,count:'1 & 2 & 3 & 4 &',tip:'Two equal notes in each beat. Say “and” halfway between clicks.'},
  {key:'sixteenth',name:'Sixteenth note',uk:'semiquaver',beats:.25,den:16,count:'1 e & a · 2 e & a · 3 e & a · 4 e & a',tip:'Four equal notes per beat. Say “one ee and uh”.'}
 ];
-const RHYTHM_PATTERNS=[
- {name:'Quarter notes',events:[0,1,2,3].map(b=>({b,d:1})),hint:'Pick once on each numbered beat. Count “1, 2, 3, 4”.'},
- {name:'Eighth notes',events:Array.from({length:8},(_,i)=>({b:i/2,d:.5})),hint:'Pick on the numbers and the “ands”. Keep both halves of each beat equal.'},
- {name:'Long and short',events:[{b:0,d:1},{b:1,d:.5},{b:1.5,d:.5},{b:2,d:2}],hint:'Quarter, two eighths, half note. Attack on 1, 2, the & of 2, and 3. Hold the last note through 4.'},
- {name:'Leave a space',events:[{b:0,d:1},{b:1,d:1,rest:true},{b:2,d:.5},{b:2.5,d:.5},{b:3,d:1}],hint:'Play 1, stay silent on 2, play 3 & 4. Keep counting through the rest.'},
- {name:'Sixteenth notes',events:Array.from({length:16},(_,i)=>({b:i/4,d:.25})),hint:'Four notes inside each beat: “1 e & a”. Begin at 50–60 BPM.'}
-];
+// RHYTHM_PATTERNS lives in rhythm-library.js.
 const rhythmOptions={pattern:0,bpm:70};
 let rhythmRun=null,rhythmFrame=0,rhythmGeneration=0;
 function noteSymbol(den,rest=false){

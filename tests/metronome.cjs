@@ -24,7 +24,7 @@ function studio({store}={}){
  if(store==='blocked')Object.defineProperty(context,'localStorage',{get(){throw new Error('SecurityError');}});
  else if(store)context.localStorage=store;
  const c=vm.createContext(context);
- for(const f of ['sampled-audio','backing','licks','rhythm','releases','chords','listen','path','metronome','navigation','app'])vm.runInContext(fs.readFileSync(`site/${f}.js`,'utf8'),c,{filename:f});
+ for(const f of ['sampled-audio','backing','licks','rhythm-library','rhythm','releases','chords','listen','path','metronome','navigation','app'])vm.runInContext(fs.readFileSync(`site/${f}.js`,'utf8'),c,{filename:f});
  const run=code=>vm.runInContext(code,c);
  const flush=()=>{const due=[...timers.values()];timers.clear();due.forEach(fn=>fn());};
  const at=t=>{run('metronome.ctx').currentTime=t;flush();};
