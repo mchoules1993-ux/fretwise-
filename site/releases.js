@@ -60,7 +60,8 @@ const FEATURE_CATALOGUE=[
  'Quarter rests, counting through silence and an introduction to the difference between straight eighths and shuffle.',
  'Rhythm library: 21 rhythms in 2/4, 3/4, 4/4, 6/8 and 12/8, from the five basic patterns to genre styles such as the 4/4 blues shuffle, 4/4 power ballad, old-style reggae skank, tresillo, funk 16ths, 3/4 waltz, 2/4 polka, 6/8 jig and 12/8 slow blues.',
  'Choose a time signature, then a rhythm. Each shows its notation (with dotted notes and rests), count, style, where you hear it and how to count it; swung rhythms are marked.',
- '40–220 BPM tempo with –/+, slider and tap tempo; clicks accented by time signature; count-in bar on or off; 1, 2, 4 or 8 bars; click and rhythm, rhythm only or click only; animated counting and note highlighting.',
+ '40–220 BPM tempo with –/+, slider and tap tempo; clicks accented by time signature; count-in bar on or off; 1, 2, 4 or 8 bars, or loop until you press Stop (for soloing over a rhythm); animated counting and note highlighting.',
+ 'Sound kit: play the rhythm on woodblock, clave, cowbell, rim click, snare, hi-hat or a guitar note (or off), and choose the click: beep, woodblock, rim click, cowbell, hi-hat, kick or off. Your choices are saved in this browser.',
  'Tap or Space-key practice against the metronome, with matched attacks, missed notes, extra taps and average timing difference.',
  'One-note guitar practice prompts and a link to Legends; tap feedback notes the effect of device audio latency.'
  ]},

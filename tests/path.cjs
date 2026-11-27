@@ -10,7 +10,7 @@ function studio({store,hash=''}={}){
  if(store==='blocked')Object.defineProperty(context,'localStorage',{get(){throw new Error('SecurityError');}});
  else if(store)context.localStorage=store;
  const c=vm.createContext(context);
- for(const f of ['sampled-audio','backing','licks','rhythm-library','rhythm','releases','chords','listen','path','metronome','navigation','app']){loading=f;vm.runInContext(fs.readFileSync(`site/${f}.js`,'utf8'),c,{filename:f});}
+ for(const f of ['sampled-audio','sound-kit','backing','licks','rhythm-library','rhythm','releases','chords','listen','path','metronome','navigation','app']){loading=f;vm.runInContext(fs.readFileSync(`site/${f}.js`,'utf8'),c,{filename:f});}
  const raw=code=>vm.runInContext(code,c);
  // Copy plain data out of the sandbox so it compares equal to arrays and objects made here.
  const run=code=>{const value=raw(code);return value&&typeof value==='object'?JSON.parse(JSON.stringify(value)):value;};
