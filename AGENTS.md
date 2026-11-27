@@ -73,19 +73,32 @@ Optional browser check (needs Playwright and Chromium):
 
 Live site: https://fretwise-guitar-studio.mchoules1293.chatgpt.site
 
-**Merging into `main` does not update the live site.** Publishing is a
-separate, manual step: upload the contents of `site/` to the host. Only
-publish when the owner asks, and always publish from the latest `main`.
-After publishing, add a line to the handoff log saying which commit went live.
+**Merging into `main` does not update the live site.** Publish manually
+only when the owner asks. Any chat with repository and Sites access can
+follow this checklist.
+
+1. Fetch `origin/main` and record its full commit SHA. Use a clean checkout
+   of that exact commit for both testing and packaging.
+2. Run every required check under **Running and testing**. Stop if a check
+   fails and report the failure before publishing.
+3. Confirm that the tested commit is still the latest `origin/main`. If
+   `main` advanced, repeat the checks on the new commit. Upload the contents
+   of `site/` from the tested commit to the existing Fretwise Site.
+4. Open the live URL, verify the affected feature, and play a sample to
+   confirm audio works. Report any issue or check you could not complete.
+5. Add the commit SHA, Sites version, and verification results to the
+   handoff log through a PR. Give the owner the live URL, commit SHA,
+   Sites version, and verification results.
 
 ## Handoff log
 
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
-- 2026-11-27 · Claude · Sound kit and unlimited loop for the rhythm trainer (owner asked for woodblock and other metronome sounds, the guitar tone optional, and no 8-bar limit). New shared `site/sound-kit.js`: woodblock, clave, cowbell, rim click and beep made in code; snare, hi-hat and kick from the existing drum samples (levels evened out); guitar note. The trainer has RHYTHM SOUND (default woodblock) and CLICK SOUND (default beep) pickers, saved in the browser only (`fretwise.rhythm.v1`); the count-in always clicks. BARS has “Until I stop”: bars are now scheduled just ahead while playing, and Stop in tap practice shows the score so far. Note-length demos keep the guitar note. New required check `tests/sound-kit.cjs`; `tests/rhythm-library.cjs` now 38 checks; browser check passed at 1280×800, 390×844, 844×390 and 320×568. Next: the metronome gets the same sound choice, then rhythm library 1b. · PR to come · open
+- 2026-11-27 · Claude · Sound kit and unlimited loop for the rhythm trainer (owner asked for woodblock and other metronome sounds, the guitar tone optional, and no 8-bar limit). New shared `site/sound-kit.js`: woodblock, clave, cowbell, rim click and beep made in code; snare, hi-hat and kick from the existing drum samples (levels evened out); guitar note. The trainer has RHYTHM SOUND (default woodblock) and CLICK SOUND (default beep) pickers, saved in the browser only (`fretwise.rhythm.v1`); the count-in always clicks. BARS has “Until I stop”: bars are now scheduled just ahead while playing, and Stop in tap practice shows the score so far. Note-length demos keep the guitar note. New required check `tests/sound-kit.cjs`; `tests/rhythm-library.cjs` now 38 checks; browser check passed at 1280×800, 390×844, 844×390 and 320×568. Next: the metronome gets the same sound choice, then rhythm library 1b. Also tidied the log: removed a wrong “Owner published by hand” line I had added (ChatGPT published 5daaeec as version 19) and a duplicate phase 1a entry. · PR to come · open
+- 2026-11-27 · ChatGPT · Documented the manual release checklist for the existing Fretwise Site. · `codex/release-checklist` · open
 - 2026-11-27 · ChatGPT · Published `main` commit `5daaeecd35c343173a259d0a61e22beae74c0f1f` as version 19. All nine required checks passed; verified that the live rhythm library matches the source. · published
-- 2026-11-27 · Claude · Restored the two entries below (#30 and the version 18 publish, #29), which were lost when `main` was merged into the rhythm library branch. · this PR · open
+- 2026-11-27 · Claude · Restored the two entries below (#30 and the version 18 publish, #29), which were lost when `main` was merged into the rhythm library branch. · mchoules1993-ux/fretwise-#34 · merged
 - 2026-11-27 · Claude · Rhythm library, phase 1a: the Rhythm page trainer now has 21 rhythms in 2/4, 3/4, 4/4, 6/8 and 12/8 (new `site/rhythm-library.js`), from the five basic patterns (kept first, in order, for the Practice path) to genre styles such as 4/4 blues shuffle (swung), power ballad, reggae skank, waltz, polka, jig and 12/8 slow blues. Pick a time signature, then a rhythm; tempo 40–220 with –/+ and tap, accented clicks, count-in on/off, 1–8 bars, sound choice, tap practice for any rhythm. New required check `tests/rhythm-library.cjs`, optional `tests/rhythm-library-browser.cjs` (passed at 1280×800, 390×844, 844×390 and 320×568). Agreed order next: 1b irregular signatures (9/8, 5/4, 7/8) and more genres → strum mapping → Game → Microphone; then the Half / ¾ / Full speed buttons. The header overflow found during this work was fixed separately in mchoules1993-ux/fretwise-#30. Design and plan in `docs/superpowers/`. · mchoules1993-ux/fretwise-#31 · merged
 - 2026-11-27 · Claude · Fixed sideways scrolling on small phones: at 320 px the header’s “Sections” button stuck out 20 px past the screen on every page. At 380 px and below the small “Home” label next to the Fretwise logo is now hidden on screen (screen readers still hear it); larger sizes look the same. `tests/navigation-browser.py` now also checks that Scales and Rhythm don’t scroll sideways at every size it tests. Also marked #28 as merged. · mchoules1993-ux/fretwise-#30 · merged
 - 2026-11-27 · ChatGPT · Published `main` commit `255fd6efa5deb79731e203fc1dda7bb7d38ecd72` as version 18. All eight required checks passed. · published
