@@ -88,4 +88,56 @@ test('counts',()=>{
  assert.deepEqual(s.run(`rhythmCounts(RHYTHM_PATTERNS.find(p=>p.id==='jig'))`).join(' '),'1 & 2 & 3 & 4 & 5 & 6 &');
 });
 
+// ---- Task 2: the library view ----
+const indexOf=id=>patterns.findIndex(p=>p.id===id);
+const open=(t,setup='')=>{t.raw(`${setup};state.view='rhythm';render();`);return t.html();};
+const click=(t,id,dataset={})=>t.listeners.click.forEach(fn=>fn({target:{closest:sel=>/button/.test(sel)?{id,dataset,matches:()=>false}:null}}));
+const change=(t,id,value,checked)=>t.listeners.change.forEach(fn=>fn({target:{id,value:String(value),checked}}));
+test('trainer shows meter, style and hint',()=>{
+ const t=studio(),p=byId('waltz');const html=open(t,`selectRhythm(${indexOf('waltz')})`);
+ assert.ok(html.includes(p.name)&&html.includes(p.style)&&html.includes(p.hint)&&html.includes(p.about),'name, style, hint and about shown');
+ assert.equal((html.match(/data-rhythm-event=/g)||[]).length,p.events.length);
+ assert.ok(open(t,`selectRhythm(${indexOf('blues-shuffle')})`).includes('swung'),'the shuffle says it is swung');
+});
+test('time filter',()=>{
+ const t=studio();t.raw(`setRhythmTime('6/8')`);
+ assert.equal(t.run('RHYTHM_PATTERNS[rhythmOptions.pattern].meter'),'6/8');
+ const html=open(t);
+ for(const p of patterns)assert.equal(html.includes(`>${p.name}</option>`),p.meter==='6/8',`${p.name} listed only under its own time signature`);
+ t.raw(`setRhythmTime('all')`);const all=open(t);
+ assert.ok(all.includes('<optgroup label="4/4">')&&all.includes('<optgroup label="12/8">'),'all: grouped by time signature');
+ for(const p of patterns)assert.ok(all.includes(`>${p.name}</option>`));
+ change(t,'rhythm-time','3/4');assert.equal(t.run('RHYTHM_PATTERNS[rhythmOptions.pattern].meter'),'3/4');assert.equal(t.run('rhythmOptions.time'),'3/4');
+});
+test('selecting a pattern uses its tempo',()=>{
+ const t=studio();change(t,'rhythm-pattern',indexOf('waltz'));
+ assert.equal(t.run('rhythmOptions.pattern'),indexOf('waltz'));assert.equal(t.run('rhythmOptions.bpm'),byId('waltz').bpm);
+});
+test('tempo buttons clamp',()=>{
+ const t=studio();open(t);
+ t.raw('rhythmOptions.bpm=40');click(t,'rhythm-bpm-down');assert.equal(t.run('rhythmOptions.bpm'),40);
+ t.raw('rhythmOptions.bpm=220');click(t,'rhythm-bpm-up');assert.equal(t.run('rhythmOptions.bpm'),220);
+ t.raw('rhythmOptions.bpm=100');click(t,'rhythm-bpm-up');assert.equal(t.run('rhythmOptions.bpm'),101);assert.equal(t.element('rhythm-bpm').textContent,'101');
+ assert.match(open(t),/id="rhythm-tempo" type="range" min="40" max="220"/);
+});
+test('practice options are stored',()=>{
+ const t=studio();open(t);
+ change(t,'rhythm-sound','click');change(t,'rhythm-countin','',false);change(t,'rhythm-loops',4);
+ assert.deepEqual([t.run('rhythmOptions.sound'),t.run('rhythmOptions.countIn'),t.run('rhythmOptions.loops')],['click',false,4]);
+ const html=open(t);assert.match(html,/id="rhythm-sound"/);assert.match(html,/id="rhythm-countin"/);assert.match(html,/id="rhythm-loops"/);assert.match(html,/id="rhythm-tap-tempo"/);
+});
+test('dotted notes draw a dot',()=>{
+ assert.match(s.run('noteSymbol(4,false,true)'),/<circle/);assert.doesNotMatch(s.run('noteSymbol(4,false,false)'),/<circle/);
+ assert.notEqual(s.run('noteSymbol(8,true)'),s.run('noteSymbol(4,true)'),'an eighth rest looks different from a quarter rest');
+});
+test('count row length',()=>{
+ const t=studio(),p=byId('slow-blues-12-8');const html=open(t,`selectRhythm(${indexOf('slow-blues-12-8')})`);
+ assert.equal((html.match(/data-rhythm-tick=/g)||[]).length,p.clicks*p.steps);
+});
+test('path setup is respected',()=>{
+ const t=studio();t.raw(`setRhythmTime('6/8')`);
+ const html=open(t,`PATH_STAGES.flatMap(s=>s.steps).find(s=>s.id==='count-four').setup()`);
+ assert.equal(t.run('rhythmOptions.pattern'),0);assert.match(html,/id="rhythm-bpm">70</);assert.ok(html.includes('>Quarter notes</option>'),'the 4/4 pattern is listed');
+});
+
 (async()=>{for(const[name,fn]of tests){try{await fn();}catch(error){console.error(`✗ ${name}`);throw error;}}console.log(`rhythm-library: ok (${tests.length} checks)`);})().catch(error=>{console.error(error);process.exit(1);});

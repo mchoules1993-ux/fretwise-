@@ -323,9 +323,17 @@ footer{max-width:1400px;margin:auto;padding:22px 38px 28px;color:var(--ink-soft)
 .rhythm-event .rhythm-symbol{width:42px;height:45px}
 .rhythm-event.sounding{background:var(--gold)}
 .rhythm-event.sounding small{color:var(--ink)}
-.rhythm-counts{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));margin:6px 0 24px;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden}
+.rhythm-counts{display:grid;grid-template-columns:repeat(var(--cells,16),minmax(0,1fr));margin:6px 0 24px;border:1.5px solid var(--ink);border-radius:4px;overflow:hidden}
 .rhythm-counts div{text-align:center;padding:10px 0;font-size:12px;color:var(--ink-soft)}
 .rhythm-counts .numbered{border-left:1.5px solid var(--ink);color:var(--ink);font-weight:600;background:var(--cream-lo)}
+.rhythm-counts .group{background:var(--gold)}
+.rhythm-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0 4px}
+.rhythm-head h3{margin:0 8px 0 0;font-size:22px}
+.rhythm-event.accent strong{color:var(--orange-deep)}
+.rhythm-practice-controls{margin-top:4px}
+.rhythm-tempo-row{display:flex;align-items:center;gap:8px}
+.rhythm-tempo-row input{flex:1;min-width:0}
+.rhythm-check{display:flex;align-items:center;gap:8px;align-self:flex-end;font-size:14px;min-height:44px}
 .rhythm-counts .current{background:var(--orange-deep);color:var(--cream)}
 .rhythm-tap{width:100%;min-height:80px;background:var(--ink);border:1.5px solid var(--ink);color:var(--cream);border-radius:6px;font-family:var(--display);font-size:24px;font-weight:700;touch-action:manipulation;margin:4px 0 8px;box-shadow:4px 4px 0 var(--orange-deep)}
 .rhythm-tap:active{background:var(--orange-deep);color:var(--cream)}
@@ -343,6 +351,8 @@ footer{max-width:1400px;margin:auto;padding:22px 38px 28px;color:var(--ink-soft)
   .rhythm-counts div{font-size:11px}
   .rhythm-console .lick-actions .btn{flex:1;white-space:nowrap}
   .rhythm-event{min-width:47px}
+  .rhythm-counts.many{grid-template-columns:repeat(var(--half),minmax(0,1fr))}
+  .rhythm-counts.many div:nth-child(n){border-bottom:1px solid var(--ink)}
 }
 @media(max-width:380px){
   .rhythm-values{grid-template-columns:1fr}
