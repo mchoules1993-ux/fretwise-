@@ -20,7 +20,7 @@ function studio(){
  const context={console,Math,Date,JSON,Promise,Float32Array,Uint8Array,Map,Set,URL,Blob,window,document,location:{hash:''},history:{replaceState(){},pushState(){}},
   setTimeout:(fn)=>{timers.set(++timerId,fn);return timerId;},clearTimeout:id=>timers.delete(id),requestAnimationFrame:()=>0,cancelAnimationFrame(){}};
  const c=vm.createContext(context);
- for(const f of ['sampled-audio','backing','licks','rhythm-library','rhythm','releases','chords','listen','path','metronome','navigation','app'])vm.runInContext(fs.readFileSync(`site/${f}.js`,'utf8'),c,{filename:f});
+ for(const f of ['sampled-audio','sound-kit','backing','licks','rhythm-library','rhythm','releases','chords','listen','path','metronome','navigation','app'])vm.runInContext(fs.readFileSync(`site/${f}.js`,'utf8'),c,{filename:f});
  const raw=code=>vm.runInContext(code,c);
  // Copy plain data out of the sandbox so it compares equal to arrays and objects made here.
  const run=code=>{const value=raw(code);return value&&typeof value==='object'?JSON.parse(JSON.stringify(value)):value;};
