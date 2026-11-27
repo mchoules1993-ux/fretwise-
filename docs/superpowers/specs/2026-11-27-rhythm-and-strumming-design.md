@@ -16,8 +16,10 @@ sheets, names, text, layout or code, and keep Fretwise's orange amp look.
 
 ## Roadmap (owner's order)
 
-1. **Rhythm library** — patterns in several time signatures and styles; listen,
-   count and tap them on a single guitar note. *(this subtask)*
+1. **Rhythm library**, in two phases (owner, 2026-11-27):
+   - **1a** — common time signatures (2/4, 3/4, 4/4, 6/8, 12/8) with genre-named
+     rhythms such as “4/4 blues shuffle” and “4/4 power ballad”. *(this subtask)*
+   - **1b** — irregular time signatures (9/8, 5/4, 7/8) and more genre examples.
 2. **Strum mapping** — the same patterns as strums: chord picker, down/up arrows,
    strummed sound, plus named strum patterns. Lives on a Strumming tab on the
    Rhythm page.
@@ -39,16 +41,15 @@ up-strokes on the off-beats; a chuck is a muted stroke).
 ### Goals
 
 - Replace the five fixed patterns in “Your rhythm trainer” with a library of
-  about 22 patterns. The five existing ones stay first, in the same order and with
+  about 21 patterns, named by time signature and genre (e.g. “4/4 blues shuffle”). The five existing ones stay first, in the same order and with
   the same names, so the Practice path keeps working.
-- Time signatures: 2/4, 3/4, 4/4, 6/8, 9/8, 12/8. (5/4 and 7/8 left out for now.)
+- Time signatures: 2/4, 3/4, 4/4, 6/8, 12/8. (9/8, 5/4 and 7/8 are phase 1b.)
 - Styles, at least:
-  - 4/4: rock eighths, pop push, ballad, tresillo (3+3+2), old-style reggae
+  - 4/4: rock eighths, pop push, power ballad, tresillo (3+3+2), old-style reggae
     skank, funk 16ths, blues shuffle.
   - 3/4: waltz (oom-pah-pah), country waltz, folk 3.
   - 2/4: polka, march.
   - 6/8: ballad, jig.
-  - 9/8: slip jig.
   - 12/8: slow blues, 12/8 long-short (shows the link to the shuffle).
 - Pick a pattern by time signature, then by name. Each pattern shows its
   notation, count, style note and a hint. Each has its own starting tempo.

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Turn “Your rhythm trainer” on the Rhythm page into a library of ~22 rhythm patterns in 2/4, 3/4, 4/4, 6/8, 9/8 and 12/8, in named styles, that you can hear, count and tap on one guitar note.
+**Goal:** Turn “Your rhythm trainer” on the Rhythm page into a library of ~21 rhythm patterns in 2/4, 3/4, 4/4, 6/8 and 12/8, in named genre styles (phase 1; 9/8, 5/4, 7/8 come in phase 2), that you can hear, count and tap on one guitar note.
 
 **Architecture:** New `site/rhythm-library.js` (loaded just before `rhythm.js`) holds the meters, the pattern data and pure helpers. It still exports `RHYTHM_PATTERNS`, now built from a step grid, with the same `events` shape (`{b,d,rest}` in clicks) that `rhythm.js` and `tests/path.cjs` already use. `rhythm.js` keeps its lessons and gets a general trainer: any bar length, accents, swing, count-in, loops and sound choice.
 
@@ -12,9 +12,9 @@
 
 ## Global Constraints
 
-- Time signatures exactly: 2/4, 3/4, 4/4, 6/8, 9/8, 12/8.
+- Time signatures exactly: 2/4, 3/4, 4/4, 6/8, 12/8 (phase 1). Irregular signatures and more genre examples are phase 2.
 - BPM counts every click, as in the metronome: a click is a quarter in x/4 and an eighth in x/8. Tempo range 40–220 (use `clampMetronomeBpm`).
-- Accents: strong on click 1, medium on the first click of every other group, weak otherwise. Groups: 2/4 `[2]`, 3/4 `[3]`, 4/4 `[4]`, 6/8 `[3,3]`, 9/8 `[3,3,3]`, 12/8 `[3,3,3,3]`.
+- Accents: strong on click 1, medium on the first click of every other group, weak otherwise. Groups: 2/4 `[2]`, 3/4 `[3]`, 4/4 `[4]`, 6/8 `[3,3]`, 12/8 `[3,3,3,3]`.
 - The first five `RHYTHM_PATTERNS` keep today's names and order: Quarter notes, Eighth notes, Long and short, Leave a space, Sixteenth notes. `RHYTHM_PATTERNS[3].events` rests stay at `b:1`. `site/path.js` and `tests/path.cjs` must not need changes.
 - Shuffle: written as eighths with a “swung” label, played long-short on a triplet grid.
 - Notation stays in today's box style (`.rhythm-score` / `.rhythm-event`), with dotted notes and eighth rests added. No beams.
@@ -62,12 +62,12 @@
   - `makeRhythm(def) -> Pattern` (adds `clicks` and `events`)
   - `noteValue(pattern, lenSteps) -> {den:1|2|4|8|16, dotted:boolean} | null`
   - `rhythmCounts(pattern) -> string[]` (one label per grid step)
-  - `RHYTHM_TIME_FILTERS = ['all','2/4','3/4','4/4','6/8','9/8','12/8']`
+  - `RHYTHM_TIME_FILTERS = ['all','2/4','3/4','4/4','6/8','12/8']`
 
 - [ ] **Step 1: Write failing tests in `tests/rhythm-library.cjs`.** Copy the `studio()` harness from `tests/metronome.cjs`, with `'rhythm-library'` before `'rhythm'` in the file list. Tests:
   - `meters and accents`: `meterAccents('6/8')` → `strong weak weak medium weak weak`; `'12/8'` has 12 entries with `medium` at 3, 6 and 9; `'3/4'` → `strong weak weak`; the groups match the metronome's for every id both define.
   - `first five patterns unchanged`: names in order; `RHYTHM_PATTERNS[3].events.filter(e=>e.rest).map(e=>e.b)` is `[1]`; every one is 4/4 with `bpm` 70.
-  - `library coverage`: 20–24 patterns; ids unique; at least one pattern in every meter; these ids exist: `waltz`, `country-waltz`, `blues-shuffle`, `reggae-skank`, `jig`, `slip-jig`, `slow-blues-12-8`, `tresillo`, `polka`.
+  - `library coverage`: 19–23 patterns; ids unique; at least one pattern in every meter; these ids exist: `waltz`, `country-waltz`, `blues-shuffle`, `power-ballad`, `reggae-skank`, `jig`, `slow-blues-12-8`, `tresillo`, `polka`; every pattern name after the first five starts with its time signature (e.g. `4/4 blues shuffle`).
   - `every bar is complete`: for each pattern, hits are inside the bar, don't overlap and are in step order; the sum of `events[].d` equals `clicks`; every event `d > 0`.
   - `every length can be drawn`: for non-swing patterns `noteValue` is non-null for every hit and every rest.
   - `swing is long-short`: `blues-shuffle` has `swing:true`, `steps:3`, and pairs of hits at grid steps 0 and 2 of a beat with lengths 2 and 1.
@@ -78,11 +78,10 @@
 
 - [ ] **Step 3: Implement `site/rhythm-library.js`.** Pattern names and levels (write the hits yourself; each must sound like its name):
   - 4/4 basics, level 1: the five existing patterns (port their rhythms exactly, with ids `quarter-notes`, `eighth-notes`, `long-and-short`, `leave-a-space`, `sixteenth-notes`).
-  - 4/4 styles: `rock-eighths` (accents on 2 and 4), `pop-push` (anticipation on the & of 2), `ballad` (dotted quarter, eighth, half), `tresillo` (3+3+2 eighths), `reggae-skank`, `funk-16ths`, `blues-shuffle`.
+  - 4/4 styles: `rock-eighths` (accents on 2 and 4), `pop-push` (anticipation on the & of 2), `power-ballad` (driving eighths with accents on 2 and 4, a held half note at the end of the bar), `tresillo` (3+3+2 eighths), `reggae-skank`, `funk-16ths`, `blues-shuffle`.
   - 3/4: `waltz` (three quarters, accent 1), `country-waltz` (quarter, then eighths on 2 and 3), `folk-3` (dotted quarter, eighth, quarter).
   - 2/4: `polka` (accented "&"s), `march` (quarter, two eighths).
   - 6/8: `ballad-6-8` (six eighths), `jig` (quarter-eighth ×2).
-  - 9/8: `slip-jig` (quarter-eighth ×3).
   - 12/8: `slow-blues-12-8` (twelve eighths), `long-short-12-8` (quarter-eighth ×4, with an `about` line linking it to the shuffle).
   Each pattern gets a plain one-sentence `hint` (what to count or feel) and a short `about` (where you hear this style). Then delete the old constant from `rhythm.js`, add the script tag and the four loader entries.
 
