@@ -41,7 +41,7 @@ function setRhythmTime(id){stopAudio();rhythmOptions.time=RHYTHM_TIME_FILTERS.in
 function setRhythmBpm(value){stopAudio();rhythmOptions.bpm=clampMetronomeBpm(value,rhythmOptions.bpm);const label=document.getElementById('rhythm-bpm');if(label)label.textContent=String(rhythmOptions.bpm);const slider=document.getElementById('rhythm-tempo');if(slider)slider.value=String(rhythmOptions.bpm);return rhythmOptions.bpm;}
 function rhythmLengthName(p,e){const v=noteValue(p,Math.round(e.d*p.steps));if(!v)return `${+e.d.toFixed(2)} click${e.d===1?'':'s'}`;return `${v.dotted?'dotted ':''}${NOTE_NAMES[v.den]}${e.rest?' rest':''}`;}
 function rhythmPlace(p,e){const step=Math.round(e.b*p.steps),click=Math.floor(step/p.steps)+1;return step%p.steps===0?`${rhythmMeter(p.meter).clickDen===4?'Beat':'Count'} ${click}`:`${click} ${rhythmCounts(p)[step]}`;}
-function rhythmPlanText(){const {countIn,loops}=rhythmOptions;return `${countIn?'One count-in bar of clicks, then ':''}${loops} bar${loops===1?'':'s'}. The highlight shows the current step. Clicks mark the beats; the rhythm sound plays the rhythm. During tap practice only the click plays.`;}
+function rhythmPlanText(){const {countIn,loops}=rhythmOptions;return `${countIn?'One count-in bar of clicks, then ':''}${loops>0?`${loops} bar${loops===1?'':'s'}.`:`${countIn?'t':'T'}he rhythm loops until you press Stop.`} The highlight shows the current step. Clicks mark the beats; the rhythm sound plays the rhythm. During tap practice only the click plays.`;}
 function updateRhythmPlan(){const e=document.getElementById('rhythm-plan');if(e)e.textContent=rhythmPlanText();}
 function rhythmTrainer(){
  const p=RHYTHM_PATTERNS[rhythmOptions.pattern]||RHYTHM_PATTERNS[0];
@@ -57,10 +57,10 @@ function rhythmTrainer(){
  <div class="rhythm-head"><h3>${p.name}</h3><span class="badge">${p.meter}</span><span class="badge">${p.style}</span>${p.swing?'<span class="badge">swung</span>':''}</div><p>${p.about}</p><p><strong>${p.hint}</strong></p><p class="tiny">${meter.hint}${p.swing?' Swung: each beat splits into three, and the first note is twice as long as the second.':''}</p>
  <div class="rhythm-score" aria-label="Rhythm notation from left to right">${p.events.map(e=>{const v=noteValue(p,Math.round(e.d*p.steps))||{den:4,dotted:false},name=rhythmLengthName(p,e);return `<div class="rhythm-event${e.accent?' accent':''}" data-rhythm-event="${e.b}" style="flex:${e.d}" title="${name}">${noteSymbol(v.den,e.rest,v.dotted)}<strong>${name}</strong><small>${rhythmPlace(p,e)}${e.accent?' · accent':''}</small></div>`;}).join('')}</div>
  <div class="rhythm-counts${cells>16?' many':''}" style="--cells:${cells};--half:${Math.ceil(cells/2)}" aria-label="${cells} steps in one bar">${counts.map((label,i)=>`<div data-rhythm-tick="${i}" class="${i%p.steps===0?'numbered':''}${i%p.steps===0&&groupStarts.has(i/p.steps)?' group':''}"><b>${label}</b></div>`).join('')}</div>
- <div class="controls rhythm-practice-controls"><div class="field wide"><label for="rhythm-tempo">TEMPO · <span id="rhythm-bpm">${rhythmOptions.bpm}</span> BPM${meter.clickDen===8?' (every click)':''}</label><div class="rhythm-tempo-row"><button class="btn small" id="rhythm-bpm-down" aria-label="Slower">–</button><input id="rhythm-tempo" type="range" min="40" max="220" value="${rhythmOptions.bpm}"><button class="btn small" id="rhythm-bpm-up" aria-label="Faster">+</button><button class="btn small" id="rhythm-tap-tempo">Tap</button></div></div>${select('rhythm-voice','RHYTHM SOUND',RHYTHM_SOUND_IDS.map(id=>[id,kitSound(id).name]),rhythmOptions.rhythmSound)}${select('rhythm-click','CLICK SOUND',CLICK_SOUND_IDS.map(id=>[id,kitSound(id).name]),rhythmOptions.clickSound)}${select('rhythm-loops','BARS',[1,2,4,8].map(n=>[n,n]),rhythmOptions.loops)}<label class="rhythm-check"><input type="checkbox" id="rhythm-countin" ${rhythmOptions.countIn?'checked':''}> Count-in bar</label></div>
+ <div class="controls rhythm-practice-controls"><div class="field wide"><label for="rhythm-tempo">TEMPO · <span id="rhythm-bpm">${rhythmOptions.bpm}</span> BPM${meter.clickDen===8?' (every click)':''}</label><div class="rhythm-tempo-row"><button class="btn small" id="rhythm-bpm-down" aria-label="Slower">–</button><input id="rhythm-tempo" type="range" min="40" max="220" value="${rhythmOptions.bpm}"><button class="btn small" id="rhythm-bpm-up" aria-label="Faster">+</button><button class="btn small" id="rhythm-tap-tempo">Tap</button></div></div>${select('rhythm-voice','RHYTHM SOUND',RHYTHM_SOUND_IDS.map(id=>[id,kitSound(id).name]),rhythmOptions.rhythmSound)}${select('rhythm-click','CLICK SOUND',CLICK_SOUND_IDS.map(id=>[id,kitSound(id).name]),rhythmOptions.clickSound)}${select('rhythm-loops','BARS',[[1,1],[2,2],[4,4],[8,8],[0,'Until I stop']],rhythmOptions.loops)}<label class="rhythm-check"><input type="checkbox" id="rhythm-countin" ${rhythmOptions.countIn?'checked':''}> Count-in bar</label></div>
  <div class="lick-actions"><button class="btn primary" id="rhythm-play">▶ Hear & count</button><button class="btn" id="rhythm-practice">Start tap practice</button><button class="btn" id="rhythm-stop">■ Stop</button></div><p class="tiny" style="margin-top:12px" id="rhythm-plan">${rhythmPlanText()}</p><button class="rhythm-tap" id="rhythm-tap" disabled>Tap here · or press Space</button><div id="audio-status" class="audio-note" role="status">Listen first, then tap the same pattern with the beat.</div><p class="tiny">Timing feedback is approximate: Bluetooth and device audio latency can affect the result.</p></section>`;
 }
-function stopRhythm(){rhythmGeneration++;cancelAnimationFrame(rhythmFrame);rhythmRun=null;document.querySelectorAll('[data-rhythm-event],[data-rhythm-tick]').forEach(e=>e.classList.remove('sounding','current'));const tap=document.getElementById('rhythm-tap');if(tap)tap.disabled=true;}
+function stopRhythm(){rhythmGeneration++;cancelAnimationFrame(rhythmFrame);if(rhythmRun)clearTimeout(rhythmRun.timer);rhythmRun=null;document.querySelectorAll('[data-rhythm-event],[data-rhythm-tick]').forEach(e=>e.classList.remove('sounding','current'));const tap=document.getElementById('rhythm-tap');if(tap)tap.disabled=true;}
 // Everything one run plays, in seconds from the first click. Pure, so it can be tested.
 // sound: 'both', 'rhythm' (clicks only in the count-in) or 'click' (no guitar).
 function rhythmSchedule(p,bpm,{countIn=true,loops=2,sound='both'}={}){
@@ -72,6 +72,7 @@ function rhythmSchedule(p,bpm,{countIn=true,loops=2,sound='both'}={}){
  }
  return out.sort((x,y)=>x.t-y.t||(x.kind==='click'?-1:1));
 }
+const RHYTHM_AHEAD=.3,RHYTHM_TICK_MS=25;
 async function startRhythm(practice=false,demo=null){
  // The note-length demos keep their fixed form: four count-in clicks, then two bars of 4/4, on the
  // guitar note, because a woodblock can't show how long a note lasts.
@@ -80,27 +81,44 @@ async function startRhythm(practice=false,demo=null){
  // Tap practice keeps the rhythm silent and always clicks; the count-in always clicks too.
  const voice=practice?'off':demo?'guitar':rhythmOptions.rhythmSound,click=rhythmOptions.clickSound,countClick=click==='off'?'beep':click,barClick=practice?countClick:click;
  stopAudio();const generation=rhythmGeneration,ctx=await getAudio({instruments:kitInstruments([voice,countClick,barClick])});if(!ctx||generation!==rhythmGeneration||state.view!=='rhythm')return;
- const seconds=60/rhythmOptions.bpm,start=ctx.currentTime+.12,lead=opts.countIn?p.clicks*seconds:0,when=start+lead,end=when+opts.loops*p.clicks*seconds;
- const attacks=rhythmSchedule(p,rhythmOptions.bpm,{...opts,sound:'rhythm'}).filter(e=>e.kind==='note').map(e=>start+e.t);
- // A tap counts for the nearest attack, but never reaches halfway to the next one.
- const gaps=attacks.slice(1).map((t,i)=>t-attacks[i]),tolerance=Math.min(.2,seconds*.22,...gaps.map(g=>g/2));
- rhythmRun={ctx,start,when,end,seconds,practice,p,loops:opts.loops,tolerance,expected:attacks.map(at=>({at,hit:false})),errors:[],extra:0};playing=true;
- for(const e of rhythmSchedule(p,rhythmOptions.bpm,{...opts,sound:'both'})){
-  if(e.kind==='click'){const id=start+e.t<when-1e-9?countClick:barClick;if(id!=='off')playKitSound(ctx,id,start+e.t,{accent:e.accent,role:'click'});}
-  else if(voice!=='off')playKitSound(ctx,voice,start+e.t,{accent:e.accent?'strong':'medium',duration:e.dur,role:'note'});
+ // Bars are put on the audio clock a little ahead while playing (like the metronome), so a run
+ // can loop until Stop. loops 0 = until Stop.
+ const seconds=60/rhythmOptions.bpm,barSec=p.clicks*seconds,start=ctx.currentTime+.12,lead=opts.countIn?barSec:0,when=start+lead;
+ const bars=opts.loops>0?(opts.countIn?1:0)+opts.loops:Infinity,end=opts.loops>0?when+opts.loops*barSec:Infinity;
+ const oneBar=rhythmSchedule(p,rhythmOptions.bpm,{countIn:false,loops:1,sound:'both'}),barAttacks=oneBar.filter(e=>e.kind==='note').map(e=>e.t);
+ // A tap counts for the nearest attack, but never reaches halfway to the next one (the next bar's first included).
+ const gaps=barAttacks.slice(1).map((t,i)=>t-barAttacks[i]);if(barAttacks.length)gaps.push(barSec-barAttacks[barAttacks.length-1]+barAttacks[0]);
+ const tolerance=Math.min(.2,seconds*.22,...gaps.map(g=>g/2));
+ const run=rhythmRun={ctx,start,when,end,seconds,practice,p,loops:opts.loops,tolerance,expected:[],errors:[],extra:0,bar:0,timer:0};playing=true;
+ function scheduleBar(b){
+  const at=start+b*barSec,countBar=opts.countIn&&b===0;
+  for(const e of oneBar){
+   if(e.kind==='click'){const id=countBar?countClick:barClick;if(id!=='off')playKitSound(ctx,id,at+e.t,{accent:e.accent,role:'click'});}
+   else if(!countBar){run.expected.push({at:at+e.t,hit:false});if(voice!=='off')playKitSound(ctx,voice,at+e.t,{accent:e.accent?'strong':'medium',duration:e.dur,role:'note'});}
+  }
  }
+ function pump(){
+  if(rhythmRun!==run)return;
+  while(run.bar<bars&&start+run.bar*barSec<ctx.currentTime+RHYTHM_AHEAD){
+   // After a long stall (a busy or hidden page) skip bars that are already late instead of a burst.
+   if(start+(run.bar+1)*barSec>ctx.currentTime)scheduleBar(run.bar);
+   run.bar++;
+  }
+  if(run.bar<bars)run.timer=setTimeout(pump,RHYTHM_TICK_MS);
+ }
+ pump();
  const tap=document.getElementById('rhythm-tap');if(tap)tap.disabled=!practice;
  function frame(){const r=rhythmRun;if(!r||r.ctx!==ctx)return;const t=ctx.currentTime;if(t>=end){const message=practice?rhythmFeedback(r):`${p.name} finished. Now count it and play it on one guitar note.`;stopAudio();status(message);return;}
   const beat=(t-when)/seconds,local=((beat%p.clicks)+p.clicks)%p.clicks,tick=Math.floor(local*p.steps);
   // Demos play a fixed 4/4 bar, which may not match the rhythm shown, so they don't move the highlight.
   if(!demo){document.querySelectorAll('[data-rhythm-tick]').forEach(e=>e.classList.toggle('current',beat>=0&&Number(e.dataset.rhythmTick)===tick));document.querySelectorAll('[data-rhythm-event]').forEach(e=>{const n=Number(e.dataset.rhythmEvent),ev=p.events.find(v=>v.b===n);e.classList.toggle('sounding',beat>=0&&!!ev&&local>=n&&local<n+ev.d)});}
-  const phase=beat<0?`Count in: ${Math.floor((t-start)/seconds)+1} of ${p.clicks}`:`Bar ${Math.floor(beat/p.clicks)+1} of ${opts.loops} · ${Math.floor(local)+1}${practice?' · tap the attacks':''}`;const statusEl=document.getElementById('audio-status');if(statusEl&&statusEl.textContent!==phase)statusEl.textContent=phase;rhythmFrame=requestAnimationFrame(frame);
+  const phase=beat<0?`Count in: ${Math.floor((t-start)/seconds)+1} of ${p.clicks}`:`Bar ${Math.floor(beat/p.clicks)+1}${opts.loops>0?` of ${opts.loops}`:''} · ${Math.floor(local)+1}${practice?' · tap the attacks':''}`;const statusEl=document.getElementById('audio-status');if(statusEl&&statusEl.textContent!==phase)statusEl.textContent=phase;rhythmFrame=requestAnimationFrame(frame);
  }
  status(practice?(opts.countIn?'Count in, then tap the note attacks. Keep silence during rests.':'Tap the note attacks. Keep silence during rests.'):(opts.countIn?'One bar of clicks, then listen to the rhythm.':'Listen to the rhythm.'));rhythmFrame=requestAnimationFrame(frame);
 }
 function rhythmFeedback(r){const hits=r.expected.filter(e=>e.hit).length,total=r.expected.length;if(!hits)return 'No taps recorded. Listen to the pattern, then try tap practice again.';const error=Math.round(r.errors.reduce((a,b)=>a+b,0)/hits*1000);return `${hits}/${total} note attacks matched · ${total-hits} missed · ${r.extra} extra tap${r.extra===1?'':'s'} · average timing difference ${error} ms. ${hits===total&&r.extra===0?'Good: try the same pattern on your guitar.':'Slow down and keep counting through the bar.'}`;}
 function tapRhythm(){const r=rhythmRun;if(!r?.practice)return;const now=r.ctx.currentTime;if(now<r.when||now>=r.end)return;const candidates=r.expected.filter(e=>!e.hit),nearest=candidates.sort((a,b)=>Math.abs(a.at-now)-Math.abs(b.at-now))[0],tolerance=r.tolerance;if(nearest&&Math.abs(nearest.at-now)<=tolerance){nearest.hit=true;r.errors.push(Math.abs(nearest.at-now));}else r.extra++;const b=document.getElementById('rhythm-tap');b.textContent='Tap!';clearTimeout(b._tapTimer);b._tapTimer=setTimeout(()=>{b.textContent='Tap here · or press Space';},100);}
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='rhythm-play')startRhythm().catch(audioError);if(b.id==='rhythm-practice')startRhythm(true).catch(audioError);if(b.id==='rhythm-stop'){stopAudio();status('Rhythm stopped.');}if(b.id==='rhythm-tap')tapRhythm();if(b.id==='rhythm-bpm-down')setRhythmBpm(rhythmOptions.bpm-1);if(b.id==='rhythm-bpm-up')setRhythmBpm(rhythmOptions.bpm+1);if(b.id==='rhythm-tap-tempo'){rhythmTapTimes=[...rhythmTapTimes,Date.now()].slice(-8);const bpm=tapTempoBpm(rhythmTapTimes);if(bpm)setRhythmBpm(bpm);}if(b.dataset.rhythmDemo)startRhythm(false,RHYTHM_VALUES.find(v=>v.key===b.dataset.rhythmDemo)).catch(audioError);});
-document.addEventListener('change',e=>{const id=e.target.id;if(id==='rhythm-pattern'){selectRhythm(Number(e.target.value));render();}else if(id==='rhythm-time'){setRhythmTime(e.target.value);render();}else if(id==='rhythm-voice'||id==='rhythm-click'){const ids=id==='rhythm-voice'?RHYTHM_SOUND_IDS:CLICK_SOUND_IDS;if(ids.includes(e.target.value)){stopAudio();rhythmOptions[id==='rhythm-voice'?'rhythmSound':'clickSound']=e.target.value;saveRhythmSounds();}}else if(id==='rhythm-countin'){stopAudio();rhythmOptions.countIn=!!e.target.checked;updateRhythmPlan();}else if(id==='rhythm-loops'){stopAudio();rhythmOptions.loops=Number(e.target.value)||2;updateRhythmPlan();}});
+document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.id==='rhythm-play')startRhythm().catch(audioError);if(b.id==='rhythm-practice')startRhythm(true).catch(audioError);if(b.id==='rhythm-stop'){const r=rhythmRun,message=r?.practice?rhythmFeedback({...r,expected:r.expected.filter(x=>x.at<r.ctx.currentTime)}):'Rhythm stopped.';stopAudio();status(message);}if(b.id==='rhythm-tap')tapRhythm();if(b.id==='rhythm-bpm-down')setRhythmBpm(rhythmOptions.bpm-1);if(b.id==='rhythm-bpm-up')setRhythmBpm(rhythmOptions.bpm+1);if(b.id==='rhythm-tap-tempo'){rhythmTapTimes=[...rhythmTapTimes,Date.now()].slice(-8);const bpm=tapTempoBpm(rhythmTapTimes);if(bpm)setRhythmBpm(bpm);}if(b.dataset.rhythmDemo)startRhythm(false,RHYTHM_VALUES.find(v=>v.key===b.dataset.rhythmDemo)).catch(audioError);});
+document.addEventListener('change',e=>{const id=e.target.id;if(id==='rhythm-pattern'){selectRhythm(Number(e.target.value));render();}else if(id==='rhythm-time'){setRhythmTime(e.target.value);render();}else if(id==='rhythm-voice'||id==='rhythm-click'){const ids=id==='rhythm-voice'?RHYTHM_SOUND_IDS:CLICK_SOUND_IDS;if(ids.includes(e.target.value)){stopAudio();rhythmOptions[id==='rhythm-voice'?'rhythmSound':'clickSound']=e.target.value;saveRhythmSounds();}}else if(id==='rhythm-countin'){stopAudio();rhythmOptions.countIn=!!e.target.checked;updateRhythmPlan();}else if(id==='rhythm-loops'){stopAudio();const n=Number(e.target.value);rhythmOptions.loops=[0,1,2,4,8].includes(n)&&e.target.value!==''?n:2;updateRhythmPlan();}});
 document.addEventListener('input',e=>{if(e.target.id==='rhythm-tempo')setRhythmBpm(e.target.value);});
 document.addEventListener('keydown',e=>{if(state.view==='rhythm'&&e.code==='Space'&&rhythmRun?.practice&&(e.target===document.body||e.target.id==='rhythm-tap')){e.preventDefault();if(!e.repeat)tapRhythm();}});

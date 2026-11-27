@@ -63,6 +63,19 @@ const server=http.createServer((req,res)=>{
    assert.equal(await page.textContent('#rhythm-bpm'),'97');
    await noSideScroll('4/4 blues shuffle');
 
+   // Sounds and the endless loop: a fast 2/4 bar is about half a second, so 8 bars pass in 4–5 s.
+   await page.selectOption('#rhythm-time','2/4');
+   await page.selectOption('#rhythm-pattern',{label:'2/4 march'});
+   await page.selectOption('#rhythm-voice','clave');await page.selectOption('#rhythm-click','cowbell');
+   await page.selectOption('#rhythm-loops','0');
+   for(let i=0;i<10;i++)await page.click('#rhythm-bpm-up');
+   await page.click('#rhythm-play');
+   await page.waitForFunction(()=>rhythmRun&&rhythmRun.bar>12,null,{timeout:20000});
+   assert.ok(await page.evaluate(()=>rhythmRun!==null),'still looping after 12 bars');
+   await page.click('#rhythm-stop');
+   assert.equal(await page.evaluate(()=>rhythmRun),null);
+   assert.deepEqual(await page.evaluate(()=>JSON.parse(localStorage.getItem('fretwise.rhythm.v1'))),{rhythmSound:'clave',clickSound:'cowbell'});
+
    assert.deepEqual(errors,[],'no page errors');
    console.log(`ok ${width}×${height}`);
    await context.close();

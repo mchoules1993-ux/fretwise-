@@ -152,6 +152,8 @@ function playing(opts){
   playKitSound=(ctx,id,when,o={})=>{heard.push({kind:o.role,id,when,accent:o.accent,duration:o.duration});};`);
  return t;
 }
+// Moves the fake audio clock forward in small steps, running the scheduler's timers as it goes.
+function playThrough(t,seconds){const a=t.raw('audio'),endAt=a.currentTime+seconds;while(a.currentTime<endAt-1e-9){a.currentTime=Math.min(endAt,a.currentTime+.05);const due=[...t.timers.values()];t.timers.clear();due.forEach(fn=>fn());}}
 function memoryStore(initial={}){const data={...initial};return {data,getItem:k=>Object.hasOwn(data,k)?data[k]:null,setItem(k,v){data[k]=String(v);}};}
 test('schedule for path patterns is unchanged',()=>{
  const sec=60/70,list=sched(0,70,{countIn:true,loops:2,sound:'both'});
@@ -162,7 +164,7 @@ test('schedule for path patterns is unchanged',()=>{
 });
 test('accents follow the meter',async()=>{
  assert.deepEqual(clicksOf(sched('jig',180,{countIn:false,loops:1,sound:'both'})).map(c=>c.accent),s.run(`meterAccents('6/8')`));
- const t=playing();t.raw(`selectRhythm(${indexOf('jig')});rhythmOptions.loops=1;state.view='rhythm';`);await t.raw('startRhythm()');
+ const t=playing();t.raw(`selectRhythm(${indexOf('jig')});rhythmOptions.loops=1;state.view='rhythm';`);await t.raw('startRhythm()');playThrough(t,30);
  const accents=s.run(`meterAccents('6/8')`);assert.deepEqual(t.run('heard').filter(h=>h.kind==='click').map(h=>h.accent),[...accents,...accents]);
 });
 test('swing timing',()=>{
@@ -187,7 +189,7 @@ test('loops',()=>{
  assert.equal(notesOf(sched('waltz',90,{countIn:true,loops:4,sound:'both'})).length,4*byId('waltz').hits.length);
 });
 test('tap practice uses the real attacks',async()=>{
- const t=playing();t.raw(`selectRhythm(${indexOf('blues-shuffle')});state.view='rhythm';`);await t.raw('startRhythm(true)');
+ const t=playing();t.raw(`selectRhythm(${indexOf('blues-shuffle')});state.view='rhythm';`);await t.raw('startRhythm(true)');playThrough(t,30);
  const run=t.run('({expected:rhythmRun.expected,tolerance:rhythmRun.tolerance,when:rhythmRun.when,seconds:rhythmRun.seconds})');
  const n=notesOf(sched('blues-shuffle',96,{countIn:true,loops:2,sound:'both'})),start=run.when-4*run.seconds;
  assert.deepEqual(run.expected.map(e=>+e.at.toFixed(9)),n.map(x=>+(start+x.t).toFixed(9)));
@@ -209,12 +211,12 @@ test('stops cleanly',async()=>{
  assert.equal(t.run('rhythmRun'),null);assert.equal(t.run('heard').length,0);
 });
 test('note-length demos still play four count-in clicks and two bars',async()=>{
- const t=playing();t.raw(`state.view='rhythm';setRhythmTime('6/8');`);await t.raw(`startRhythm(false,RHYTHM_VALUES.find(v=>v.key==='half'))`);
+ const t=playing();t.raw(`state.view='rhythm';setRhythmTime('6/8');`);await t.raw(`startRhythm(false,RHYTHM_VALUES.find(v=>v.key==='half'))`);playThrough(t,30);
  const heard=t.run('heard');assert.equal(heard.filter(h=>h.kind==='click').length,12);assert.deepEqual(heard.filter(h=>h.kind==='note').map(h=>h.id),['guitar','guitar','guitar','guitar'],'demos use the guitar note, which shows how long a note lasts');
 });
 
 // ---- Sound kit in the trainer ----
-const startWith=async(t,setup)=>{t.raw(`state.view='rhythm';rhythmOptions.loops=1;${setup||''}`);await t.raw('startRhythm()');return t.run('heard');};
+const startWith=async(t,setup)=>{t.raw(`state.view='rhythm';rhythmOptions.loops=1;${setup||''}`);await t.raw('startRhythm()');playThrough(t,30);return t.run('heard');};
 test('sound pickers and defaults',()=>{
  const t=studio();assert.equal(t.run('rhythmOptions.rhythmSound'),'woodblock');assert.equal(t.run('rhythmOptions.clickSound'),'beep');
  const html=open(t),voice=html.match(/<select id="rhythm-voice">([\s\S]*?)<\/select>/)[1],click=html.match(/<select id="rhythm-click">([\s\S]*?)<\/select>/)[1];
@@ -253,9 +255,44 @@ test('rhythm off: clicks only',async()=>{
  assert.equal(heard.filter(h=>h.kind==='note').length,0);assert.equal(heard.filter(h=>h.kind==='click').length,8);
 });
 test('tap practice keeps the click even when it is off',async()=>{
- const t=playing();t.raw(`state.view='rhythm';rhythmOptions.loops=1;rhythmOptions.clickSound='off';`);await t.raw('startRhythm(true)');
+ const t=playing();t.raw(`state.view='rhythm';rhythmOptions.loops=1;rhythmOptions.clickSound='off';`);await t.raw('startRhythm(true)');playThrough(t,30);
  const heard=t.run('heard');assert.equal(heard.filter(h=>h.kind==='note').length,0);assert.equal(heard.filter(h=>h.kind==='click').length,8);
  assert.deepEqual(t.run('audioAsks')[0].instruments,[],'practice does not load the rhythm sound');
+});
+
+// ---- Unlimited loop: bars are scheduled a little ahead while playing ----
+test('bars menu has Until I stop',()=>{
+ const t=studio();const html=open(t),bars=html.match(/<select id="rhythm-loops">([\s\S]*?)<\/select>/)[1];
+ assert.match(bars,/value="0"[^>]*>Until I stop</);
+ change(t,'rhythm-loops',0);assert.equal(t.run('rhythmOptions.loops'),0,'0 means unlimited, not the default');
+ assert.match(t.run('rhythmPlanText()'),/until you press Stop/);
+ change(t,'rhythm-loops','junk');assert.equal(t.run('rhythmOptions.loops'),2);
+});
+test('finite runs play exactly their bars',async()=>{
+ const t=playing();t.raw(`state.view='rhythm';rhythmOptions.loops=2;`);await t.raw('startRhythm()');playThrough(t,30);
+ const heard=t.run('heard');assert.equal(heard.filter(h=>h.kind==='note').length,8);assert.equal(heard.filter(h=>h.kind==='click').length,12);
+ assert.equal(t.timers.size,0,'nothing left running');
+});
+test('nothing is scheduled far ahead',async()=>{
+ const t=playing();t.raw(`state.view='rhythm';rhythmOptions.loops=0;rhythmOptions.bpm=120;`);await t.raw('startRhythm()');
+ const heard=t.run('heard');assert.ok(heard.length>0);assert.ok(heard.every(h=>h.when<0.12+0.3+2+1e-9),'only the next bar is queued');
+});
+test('Until I stop keeps going, and Stop ends it',async()=>{
+ const t=playing();t.raw(`state.view='rhythm';rhythmOptions.loops=0;rhythmOptions.bpm=120;`);await t.raw('startRhythm()');
+ playThrough(t,40);
+ const notes=t.run('heard').filter(h=>h.kind==='note');assert.ok(notes.length>=4*15,`at least 15 bars after 40 s, got ${notes.length/4}`);
+ assert.ok(t.timers.size>0,'still running');
+ t.raw('stopAudio()');const before=t.run('heard').length;playThrough(t,10);
+ assert.equal(t.run('heard').length,before,'nothing plays after Stop');assert.equal(t.run('rhythmRun'),null);
+});
+test('Stop in unlimited tap practice shows the score so far',async()=>{
+ const t=playing();t.raw(`state.view='rhythm';rhythmOptions.loops=0;rhythmOptions.bpm=60;`);await t.raw('startRhythm(true)');
+ playThrough(t,6.5);
+ const attacks=t.run('rhythmRun.expected').map(e=>e.at).filter(at=>at<6.5);
+ for(const at of attacks.slice(0,3)){t.raw(`audio.currentTime=${at+0.01};tapRhythm();`);}
+ t.raw('audio.currentTime=6.5');click(t,'rhythm-stop');
+ assert.match(t.element('audio-status').textContent,new RegExp(`3/${attacks.length} note attacks matched`));
+ assert.equal(t.run('rhythmRun'),null);
 });
 
 (async()=>{for(const[name,fn]of tests){try{await fn();}catch(error){console.error(`✗ ${name}`);throw error;}}console.log(`rhythm-library: ok (${tests.length} checks)`);})().catch(error=>{console.error(error);process.exit(1);});
