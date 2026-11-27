@@ -61,10 +61,12 @@ node tests/navigation.cjs
 node tests/theme.cjs
 node tests/path.cjs
 node tests/metronome.cjs
+node tests/rhythm-library.cjs
 ```
 
 Optional browser check (needs Playwright and Chromium):
 `node tests/metronome-browser.cjs` runs the metronome at desktop and phone sizes.
+`node tests/rhythm-library-browser.cjs` runs the rhythm trainer at desktop and phone sizes.
 
 ## Publishing the live site
 
@@ -80,8 +82,8 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
-- 2026-11-27 · ChatGPT · Published `main` commit `255fd6efa5deb79731e203fc1dda7bb7d38ecd72` as version 18. All eight required checks passed. · published
-- 2026-11-26 · Claude · Added a standalone metronome: a “♩ Metronome” button in the audio bar on every page opens a panel with 40–220 BPM (–/+, slider, tap tempo), time signatures 2/4–12/8 with accents and beat lights. It keeps going across sections and key changes, and stops when anything else plays, on Stop audio, when the page is hidden or the microphone starts. Settings saved in the browser only. New required check `tests/metronome.cjs` and optional `tests/metronome-browser.cjs` (passed at 1280×800, 390×844, 844×390 and 320×568). Next agreed task: Half / ¾ / Full speed buttons for licks and studies. · mchoules1993-ux/fretwise-#28 · merged and published
+- 2026-11-27 · Claude · Rhythm library, phase 1a: the Rhythm page trainer now has 21 rhythms in 2/4, 3/4, 4/4, 6/8 and 12/8 (new `site/rhythm-library.js`), from the five basic patterns (kept first, in order, for the Practice path) to genre styles such as 4/4 blues shuffle (swung), power ballad, reggae skank, waltz, polka, jig and 12/8 slow blues. Pick a time signature, then a rhythm; tempo 40–220 with –/+ and tap, accented clicks, count-in on/off, 1–8 bars, sound choice, tap practice for any rhythm. New required check `tests/rhythm-library.cjs`, optional `tests/rhythm-library-browser.cjs` (passed at 1280×800, 390×844, 844×390 and 320×568). Agreed order next: 1b irregular signatures (9/8, 5/4, 7/8) and more genres → strum mapping → Game → Microphone; then the Half / ¾ / Full speed buttons. Found, not fixed: at 320 px the header's Sections button sticks out 20 px on every page (also on `main`). Design and plan in `docs/superpowers/`. · PR to come · open
+- 2026-11-26 · Claude · Added a standalone metronome: a “♩ Metronome” button in the audio bar on every page opens a panel with 40–220 BPM (–/+, slider, tap tempo), time signatures 2/4–12/8 with accents and beat lights. It keeps going across sections and key changes, and stops when anything else plays, on Stop audio, when the page is hidden or the microphone starts. Settings saved in the browser only. New required check `tests/metronome.cjs` and optional `tests/metronome-browser.cjs` (passed at 1280×800, 390×844, 844×390 and 320×568). Next agreed task: Half / ¾ / Full speed buttons for licks and studies. · mchoules1993-ux/fretwise-#28 · merged
 - 2026-11-16 · ChatGPT · Published `main` commit `599305819a192e0d76da1909f9d4a2692221b31e` as version 17; all seven required checks passed. · published
 - 2026-11-16 · Claude · Owner asked for every open PR to be merged. Merged #25. Brought the three old conflicting PRs into `main` through one PR: the version 15 and 16 deployment notes (#20, #22), and the microphone Start/Stop fix (#18), re-applied on top of the tuner so both the note game and the tuner show “Cancel microphone request” while permission is pending. `tests/listen.cjs` now also runs the 21 microphone lifecycle checks plus two tuner ones. · mchoules1993-ux/fretwise-#26 · merged
 - 2026-11-16 · Claude · Added the Practice path: 24 short steps in six stages, from tuning up to a first solo. Each step opens its lesson already set up; a bar above and below the lesson has “Done · next step”. Progress is saved in the browser only. New Home card, first item in the section menu, and new required check `tests/path.cjs`. Step ids in `site/path.js` are saved in players’ browsers, so don’t rename them. · mchoules1993-ux/fretwise-#25 · merged
