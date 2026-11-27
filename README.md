@@ -66,6 +66,20 @@ node tests/path.cjs
 
 Checks that all 24 steps open real lessons in the state their text describes (and that the buttons, licks, chords and frets they name exist), plus progress, saving, damaged or blocked browser storage, the coach bar, the path page and the home card. Step ids in `site/path.js` are saved in players' browsers: do not rename them.
 
+## Rhythm library checks
+
+```bash
+node tests/rhythm-library.cjs
+```
+
+Checks every rhythm in `site/rhythm-library.js` (complete bars, drawable note lengths, counts, accents per time signature, swing timing) and the Rhythm page trainer: the time-signature filter, tempo controls, count-in, bars, sound choice, tap practice and that playback stops cleanly. The first five patterns are opened by Practice path steps by position: keep them first and in order.
+
+Optional browser check (development-only Playwright and Chromium), at desktop and phone sizes:
+
+```bash
+node tests/rhythm-library-browser.cjs
+```
+
 ## Navigation checks
 
 ```bash
