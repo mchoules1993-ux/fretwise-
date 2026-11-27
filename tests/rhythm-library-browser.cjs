@@ -48,6 +48,13 @@ const server=http.createServer((req,res)=>{
    assert.equal(await page.locator('[data-rhythm-tick].current').count(),0);
    assert.equal(await page.evaluate(()=>rhythmRun),null);
 
+   // Rests light up as the beat passes through them, so you keep counting in the silence.
+   await page.selectOption('#rhythm-time','4/4');
+   await page.selectOption('#rhythm-pattern',{label:'Leave a space'});
+   await page.click('#rhythm-play');
+   await page.waitForFunction(()=>[...document.querySelectorAll('.rhythm-event.sounding')].some(e=>/rest/.test(e.textContent)),null,{timeout:15000});
+   await page.click('#rhythm-stop');
+
    // Tempo controls and the swung shuffle.
    await page.selectOption('#rhythm-time','4/4');
    await page.selectOption('#rhythm-pattern',{label:'4/4 blues shuffle'});
