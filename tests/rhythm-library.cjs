@@ -140,4 +140,75 @@ test('path setup is respected',()=>{
  assert.equal(t.run('rhythmOptions.pattern'),0);assert.match(html,/id="rhythm-bpm">70</);assert.ok(html.includes('>Quarter notes</option>'),'the 4/4 pattern is listed');
 });
 
+// ---- Task 3: playback and tap practice ----
+const sched=(id,bpm,opts)=>s.run(`rhythmSchedule(RHYTHM_PATTERNS[${typeof id==='number'?id:indexOf(id)}],${bpm},${JSON.stringify(opts)})`);
+const notesOf=list=>list.filter(e=>e.kind==='note'),clicksOf=list=>list.filter(e=>e.kind==='click');
+// A studio whose audio is a fake clock: guitar notes and clicks are recorded, not played.
+function playing(){
+ const t=studio();
+ t.raw(`var heard=[];audio=new window.AudioContext();getAudio=async()=>audio;
+  sampleVoice=(ctx,midi,when,duration,volume)=>{heard.push({kind:'note',midi,when,duration,volume});return {};};
+  lickClick=(ctx,when,strong)=>{heard.push({kind:'click',when,strong});};`);
+ return t;
+}
+test('schedule for path patterns is unchanged',()=>{
+ const sec=60/70,list=sched(0,70,{countIn:true,loops:2,sound:'both'});
+ assert.equal(clicksOf(list).length,12);
+ assert.ok(clicksOf(list).slice(0,4).every((c,i)=>close(c.t,i*sec)),'four count-in clicks');
+ const want=[0,1].flatMap(bar=>[0,1,2,3].map(b=>(4+bar*4+b)*sec));
+ assert.deepEqual(notesOf(list).map(n=>+n.t.toFixed(9)),want.map(x=>+x.toFixed(9)));
+});
+test('accents follow the meter',async()=>{
+ assert.deepEqual(clicksOf(sched('jig',180,{countIn:false,loops:1,sound:'both'})).map(c=>c.accent),s.run(`meterAccents('6/8')`));
+ const t=playing();t.raw(`selectRhythm(${indexOf('jig')});rhythmOptions.loops=1;state.view='rhythm';`);await t.raw('startRhythm()');
+ assert.deepEqual(t.run('heard').filter(h=>h.kind==='click').map(h=>h.strong),[true,false,false,true,false,false,true,false,false,true,false,false]);
+});
+test('swing timing',()=>{
+ const n=notesOf(sched('blues-shuffle',120,{countIn:false,loops:1,sound:'both'}));
+ assert.ok(close(n[0].t,0)&&close(n[1].t,.5*2/3),'the short note falls two-thirds through the beat');
+});
+test('fast tempos stay clean',()=>{
+ for(const id of ['slow-blues-12-8','sixteenth-notes','funk-16ths']){
+  const list=sched(id,220,{countIn:true,loops:2,sound:'both'}),n=notesOf(list);
+  for(let i=1;i<list.length;i++)assert.ok(list[i].t>=list[i-1].t,`${id} sorted`);
+  n.forEach((x,i)=>{assert.ok(x.dur>0,`${id} positive length`);if(n[i+1])assert.ok(x.t+x.dur<=n[i+1].t+1e-9,`${id} note ${i} ends before the next`);});
+ }
+});
+test('sound and count-in options',()=>{
+ const bar=4*60/100;
+ assert.ok(clicksOf(sched(0,100,{countIn:true,loops:2,sound:'rhythm'})).every(c=>c.t<bar-1e-9),'rhythm only: clicks only in the count-in');
+ assert.equal(notesOf(sched(0,100,{countIn:true,loops:2,sound:'click'})).length,0);
+ assert.equal(sched(0,100,{countIn:false,loops:2,sound:'both'})[0].t,0);
+ assert.ok(notesOf(sched(0,100,{countIn:false,loops:2,sound:'both'}))[0].t===0,'no count-in: the rhythm starts at once');
+});
+test('loops',()=>{
+ assert.equal(notesOf(sched('waltz',90,{countIn:true,loops:4,sound:'both'})).length,4*byId('waltz').hits.length);
+});
+test('tap practice uses the real attacks',async()=>{
+ const t=playing();t.raw(`selectRhythm(${indexOf('blues-shuffle')});state.view='rhythm';`);await t.raw('startRhythm(true)');
+ const run=t.run('({expected:rhythmRun.expected,tolerance:rhythmRun.tolerance,when:rhythmRun.when,seconds:rhythmRun.seconds})');
+ const n=notesOf(sched('blues-shuffle',96,{countIn:true,loops:2,sound:'both'})),start=run.when-4*run.seconds;
+ assert.deepEqual(run.expected.map(e=>+e.at.toFixed(9)),n.map(x=>+(start+x.t).toFixed(9)));
+ const gaps=n.slice(1).map((x,i)=>x.t-n[i].t);
+ assert.ok(run.tolerance<=Math.min(...gaps)/2+1e-9&&run.tolerance<=.2,'tolerance never reaches the next attack');
+ const heard=t.run('heard');assert.equal(heard.filter(h=>h.kind==='note').length,0,'the guitar is silent');assert.ok(heard.some(h=>h.kind==='click'));
+});
+test('stops cleanly',async()=>{
+ for(const stop of [`change('rhythm-pattern')`,`change('rhythm-time')`,'setRhythmBpm(90)','stopAudio()','startMetronome()']){
+  const t=playing();t.raw(`state.view='rhythm';render();`);await t.raw('startRhythm()');assert.ok(t.run('rhythmRun!==null'),'it starts');
+  if(stop==="change('rhythm-pattern')")change(t,'rhythm-pattern',indexOf('waltz'));
+  else if(stop==="change('rhythm-time')")change(t,'rhythm-time','6/8');
+  else await t.raw(stop);
+  assert.equal(t.run('rhythmRun'),null,`${stop} stops the rhythm`);
+ }
+ // An old start that finishes loading after Stop must not play.
+ const t=playing();t.raw(`state.view='rhythm';var release;getAudio=()=>new Promise(r=>{release=()=>r(audio);});`);
+ const late=t.raw('startRhythm()');t.raw('stopAudio()');t.raw('release()');await late;
+ assert.equal(t.run('rhythmRun'),null);assert.equal(t.run('heard').length,0);
+});
+test('note-length demos still play four count-in clicks and two bars',async()=>{
+ const t=playing();t.raw(`state.view='rhythm';setRhythmTime('6/8');`);await t.raw(`startRhythm(false,RHYTHM_VALUES.find(v=>v.key==='half'))`);
+ const heard=t.run('heard');assert.equal(heard.filter(h=>h.kind==='click').length,12);assert.equal(heard.filter(h=>h.kind==='note').length,4);
+});
+
 (async()=>{for(const[name,fn]of tests){try{await fn();}catch(error){console.error(`✗ ${name}`);throw error;}}console.log(`rhythm-library: ok (${tests.length} checks)`);})().catch(error=>{console.error(error);process.exit(1);});
