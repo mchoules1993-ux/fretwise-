@@ -38,6 +38,14 @@ try:
             expect(page.locator(".home-card")).to_have_count(10)
             expect(page.locator("#breadcrumb")).to_have_text("Home")
             assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), "Home overflows horizontally"
+            # Nothing in the header (or anywhere else) may push the page sideways.
+            for route in ["scales", "rhythm"]:
+                page.goto(f"{url}/#{route}")
+                expect(page.locator(f'.sidebar .nav[data-view="{route}"]')).to_have_attribute("aria-current", "page")
+                scroll, inner = page.evaluate("[document.documentElement.scrollWidth, innerWidth]")
+                assert scroll <= inner, f"{route} overflows horizontally at {width}px: scrollWidth {scroll} > innerWidth {inner}"
+            page.goto(url)
+            expect(page.locator("#breadcrumb")).to_have_text("Home")
             # Every homepage card opens a section and the section menu marks it current.
             for route in routes:
                 page.locator(f'.home-card[href="#{route}"]').click()
