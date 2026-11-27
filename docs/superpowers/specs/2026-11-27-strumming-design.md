@@ -1,6 +1,9 @@
 # Strumming practice (task 1: patterns + Practice mode) — design
 
-Status: draft, waiting for owner approval.
+Status: approved by the owner on 2026-11-27. Order agreed: strumming first (before
+the Half / ¾ / Full speed buttons), then Practice → Game → Microphone, all on a
+tab on the Rhythm page. The tab is created in task 1 and Game and Microphone are
+added to it later.
 
 ## Why
 
@@ -77,11 +80,11 @@ amp theme.
   within the chord's notes, down goes low→high and up goes high→low.
   Optional browser check at desktop and phone sizes, like the metronome.
 
-## Open question for the owner
+## Order of work (decided by the owner)
 
-The handoff log says the next agreed task after the metronome is
-**Half / ¾ / Full speed buttons for licks and studies**. Do strumming first,
-or that one first? (One task at a time.)
+Strumming comes before the Half / ¾ / Full speed buttons that the handoff log
+named as next. The handoff entry for this task should say the speed buttons are
+still waiting. Then: Practice (this task) → Game → Microphone.
 
 ## What the owner should check
 
