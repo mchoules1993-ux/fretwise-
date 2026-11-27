@@ -72,10 +72,22 @@ Optional browser check (needs Playwright and Chromium):
 
 Live site: https://fretwise-guitar-studio.mchoules1293.chatgpt.site
 
-**Merging into `main` does not update the live site.** Publishing is a
-separate, manual step: upload the contents of `site/` to the host. Only
-publish when the owner asks, and always publish from the latest `main`.
-After publishing, add a line to the handoff log saying which commit went live.
+**Merging into `main` does not update the live site.** Publish manually
+only when the owner asks. Any chat with repository and Sites access can
+follow this checklist.
+
+1. Fetch `origin/main` and record its full commit SHA. Use a clean checkout
+   of that exact commit for both testing and packaging.
+2. Run every required check under **Running and testing**. Stop if a check
+   fails and report the failure before publishing.
+3. Confirm that the tested commit is still the latest `origin/main`. If
+   `main` advanced, repeat the checks on the new commit. Upload the contents
+   of `site/` from the tested commit to the existing Fretwise Site.
+4. Open the live URL, verify the affected feature, and play a sample to
+   confirm audio works. Report any issue or check you could not complete.
+5. Add the commit SHA, Sites version, and verification results to the
+   handoff log through a PR. Give the owner the live URL, commit SHA,
+   Sites version, and verification results.
 
 ## Handoff log
 
@@ -87,6 +99,9 @@ PR, and status (open / merged / published).
 - 2026-11-27 · Claude · Rhythm library, phase 1a: the Rhythm page trainer now has 21 rhythms in 2/4, 3/4, 4/4, 6/8 and 12/8 (new `site/rhythm-library.js`), from the five basic patterns (kept first, in order, for the Practice path) to genre styles such as 4/4 blues shuffle (swung), power ballad, reggae skank, waltz, polka, jig and 12/8 slow blues. Pick a time signature, then a rhythm; tempo 40–220 with –/+ and tap, accented clicks, count-in on/off, 1–8 bars, sound choice, tap practice for any rhythm. New required check `tests/rhythm-library.cjs`, optional `tests/rhythm-library-browser.cjs` (passed at 1280×800, 390×844, 844×390 and 320×568). Agreed order next: 1b irregular signatures (9/8, 5/4, 7/8) and more genres → strum mapping → Game → Microphone; then the Half / ¾ / Full speed buttons. The header overflow found during this work was fixed separately in mchoules1993-ux/fretwise-#30. Design and plan in `docs/superpowers/`. · mchoules1993-ux/fretwise-#31 · merged
 - 2026-11-27 · Claude · Fixed sideways scrolling on small phones: at 320 px the header’s “Sections” button stuck out 20 px past the screen on every page. At 380 px and below the small “Home” label next to the Fretwise logo is now hidden on screen (screen readers still hear it); larger sizes look the same. `tests/navigation-browser.py` now also checks that Scales and Rhythm don’t scroll sideways at every size it tests. Also marked #28 as merged. · mchoules1993-ux/fretwise-#30 · merged
 - 2026-11-27 · ChatGPT · Published `main` commit `255fd6efa5deb79731e203fc1dda7bb7d38ecd72` as version 18. All eight required checks passed. · published
+- 2026-11-27 · ChatGPT · Documented the manual release checklist for the existing Fretwise Site. · `codex/release-checklist` · open
+- 2026-11-27 · ChatGPT · Published `main` commit `5daaeecd35c343173a259d0a61e22beae74c0f1f` as version 19. All nine required checks passed; verified that the live rhythm library matches the source. · published
+- 2026-11-27 · Claude · Rhythm library, phase 1a: the Rhythm page trainer now has 21 rhythms in 2/4, 3/4, 4/4, 6/8 and 12/8 (new `site/rhythm-library.js`), from the five basic patterns (kept first, in order, for the Practice path) to genre styles such as 4/4 blues shuffle (swung), power ballad, reggae skank, waltz, polka, jig and 12/8 slow blues. Pick a time signature, then a rhythm; tempo 40–220 with –/+ and tap, accented clicks, count-in on/off, 1–8 bars, sound choice, tap practice for any rhythm. New required check `tests/rhythm-library.cjs`, optional `tests/rhythm-library-browser.cjs` (passed at 1280×800, 390×844, 844×390 and 320×568). Agreed order next: 1b irregular signatures (9/8, 5/4, 7/8) and more genres → strum mapping → Game → Microphone; then the Half / ¾ / Full speed buttons. Found, not fixed: at 320 px the header's Sections button sticks out 20 px on every page (also on `main`). Design and plan in `docs/superpowers/`. · mchoules1993-ux/fretwise-#31 · merged and published
 - 2026-11-26 · Claude · Added a standalone metronome: a “♩ Metronome” button in the audio bar on every page opens a panel with 40–220 BPM (–/+, slider, tap tempo), time signatures 2/4–12/8 with accents and beat lights. It keeps going across sections and key changes, and stops when anything else plays, on Stop audio, when the page is hidden or the microphone starts. Settings saved in the browser only. New required check `tests/metronome.cjs` and optional `tests/metronome-browser.cjs` (passed at 1280×800, 390×844, 844×390 and 320×568). Next agreed task: Half / ¾ / Full speed buttons for licks and studies. · mchoules1993-ux/fretwise-#28 · merged
 - 2026-11-16 · ChatGPT · Published `main` commit `599305819a192e0d76da1909f9d4a2692221b31e` as version 17; all seven required checks passed. · published
 - 2026-11-16 · Claude · Owner asked for every open PR to be merged. Merged #25. Brought the three old conflicting PRs into `main` through one PR: the version 15 and 16 deployment notes (#20, #22), and the microphone Start/Stop fix (#18), re-applied on top of the tuner so both the note game and the tuner show “Cancel microphone request” while permission is pending. `tests/listen.cjs` now also runs the 21 microphone lifecycle checks plus two tuner ones. · mchoules1993-ux/fretwise-#26 · merged
