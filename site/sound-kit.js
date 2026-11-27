@@ -10,9 +10,9 @@ const SOUND_KIT=[
  {id:'cowbell',name:'Cowbell',source:'synth'},
  {id:'rim',name:'Rim click',source:'synth'},
  {id:'beep',name:'Beep',source:'synth'},
- {id:'snare',name:'Snare',source:'drums',sample:'snare'},
- {id:'hihat',name:'Hi-hat',source:'drums',sample:'hat'},
- {id:'kick',name:'Kick',source:'drums',sample:'kick'},
+ {id:'snare',name:'Snare',source:'drums',sample:'snare',level:1},
+ {id:'hihat',name:'Hi-hat',source:'drums',sample:'hat',level:6},
+ {id:'kick',name:'Kick',source:'drums',sample:'kick',level:5},
  {id:'guitar',name:'Guitar note (A)',source:'guitar'},
  {id:'off',name:'Off',source:'none'}
 ];
@@ -43,7 +43,9 @@ function kitHiss(ctx,when,{filter,freq,q=1,peak,decay}){
 function playKitSound(ctx,id,when,{accent='medium',duration=.2,track=true}={}){
  const k=kitSound(id),a=KIT_ACCENTS[accent]||KIT_ACCENTS.medium,parts=[];
  if(k.source==='none')return;
- if(k.source==='drums'){sampledDrum(ctx,k.sample,when,.1*a.gain,track,accent==='strong'?110:accent==='medium'?90:70);return;}
+ // level evens out the drum samples (the hi-hat and kick are much quieter than the snare); weak beats
+ // use a firm layer, because the softest one is almost silent.
+ if(k.source==='drums'){sampledDrum(ctx,k.sample,when,.1*a.gain*k.level,track,accent==='strong'?110:accent==='medium'?100:90);return;}
  if(k.source==='guitar'){sampleVoice(ctx,69,when,duration,.3*a.gain,'clean',track);return;}
  const p=a.pitch,lvl=a.gain;
  if(k.id==='woodblock'){parts.push(kitTone(ctx,when,{freq:1000*p,from:1060*p,peak:.45*lvl,decay:.07}),kitHiss(ctx,when,{filter:'bandpass',freq:2000*p,q:6,peak:.15*lvl,decay:.012}));}

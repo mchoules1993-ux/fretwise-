@@ -62,6 +62,7 @@ node tests/theme.cjs
 node tests/path.cjs
 node tests/metronome.cjs
 node tests/rhythm-library.cjs
+node tests/sound-kit.cjs
 ```
 
 Optional browser check (needs Playwright and Chromium):
@@ -82,6 +83,7 @@ After publishing, add a line to the handoff log saying which commit went live.
 Newest at the top. One short entry per task: date, who, what changed,
 PR, and status (open / merged / published).
 
+- 2026-11-27 · Claude · Sound kit and unlimited loop for the rhythm trainer (owner asked for woodblock and other metronome sounds, the guitar tone optional, and no 8-bar limit). New shared `site/sound-kit.js`: woodblock, clave, cowbell, rim click and beep made in code; snare, hi-hat and kick from the existing drum samples (levels evened out); guitar note. The trainer has RHYTHM SOUND (default woodblock) and CLICK SOUND (default beep) pickers, saved in the browser only (`fretwise.rhythm.v1`); the count-in always clicks. BARS has “Until I stop”: bars are now scheduled just ahead while playing, and Stop in tap practice shows the score so far. Note-length demos keep the guitar note. New required check `tests/sound-kit.cjs`; `tests/rhythm-library.cjs` now 38 checks; browser check passed at 1280×800, 390×844, 844×390 and 320×568. Next: the metronome gets the same sound choice, then rhythm library 1b. · PR to come · open
 - 2026-11-27 · ChatGPT · Published `main` commit `5daaeecd35c343173a259d0a61e22beae74c0f1f` as version 19. All nine required checks passed; verified that the live rhythm library matches the source. · published
 - 2026-11-27 · Claude · Restored the two entries below (#30 and the version 18 publish, #29), which were lost when `main` was merged into the rhythm library branch. · this PR · open
 - 2026-11-27 · Claude · Rhythm library, phase 1a: the Rhythm page trainer now has 21 rhythms in 2/4, 3/4, 4/4, 6/8 and 12/8 (new `site/rhythm-library.js`), from the five basic patterns (kept first, in order, for the Practice path) to genre styles such as 4/4 blues shuffle (swung), power ballad, reggae skank, waltz, polka, jig and 12/8 slow blues. Pick a time signature, then a rhythm; tempo 40–220 with –/+ and tap, accented clicks, count-in on/off, 1–8 bars, sound choice, tap practice for any rhythm. New required check `tests/rhythm-library.cjs`, optional `tests/rhythm-library-browser.cjs` (passed at 1280×800, 390×844, 844×390 and 320×568). Agreed order next: 1b irregular signatures (9/8, 5/4, 7/8) and more genres → strum mapping → Game → Microphone; then the Half / ¾ / Full speed buttons. The header overflow found during this work was fixed separately in mchoules1993-ux/fretwise-#30. Design and plan in `docs/superpowers/`. · mchoules1993-ux/fretwise-#31 · merged

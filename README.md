@@ -66,6 +66,14 @@ node tests/path.cjs
 
 Checks that all 24 steps open real lessons in the state their text describes (and that the buttons, licks, chords and frets they name exist), plus progress, saving, damaged or blocked browser storage, the coach bar, the path page and the home card. Step ids in `site/path.js` are saved in players' browsers: do not rename them.
 
+## Sound kit checks
+
+```bash
+node tests/sound-kit.cjs
+```
+
+Checks every sound in `site/sound-kit.js` with a recording fake audio context: the made-in-code sounds (woodblock, clave, cowbell, rim click, beep) start and stop on time at sensible levels, strong accents are louder and higher, the drum and guitar sounds use their samples at balanced levels, and only the sample banks a choice needs are loaded.
+
 ## Rhythm library checks
 
 ```bash

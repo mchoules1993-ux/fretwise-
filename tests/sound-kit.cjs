@@ -64,6 +64,15 @@ test('sampled sounds use the drum and guitar samples',()=>{
  const g=play('guitar').samples;assert.equal(g.length,1);assert.equal(g[0].midi,69);assert.ok(Math.abs(g[0].duration-.3)<1e-9);
  assert.ok(play('snare','strong').samples[0].volume>play('snare','weak').samples[0].volume,'drum accents are louder');
 });
+test('drum sounds are balanced against the others',()=>{
+ // Measured in Chromium: the hi-hat and kick samples are far quieter than the snare, and the
+ // softest layer is almost silent, so they are boosted and weak beats use a firmer layer.
+ const vol=id=>play(id,'medium').samples[0].volume;
+ assert.ok(vol('hihat')>=5*vol('snare')&&vol('kick')>=4*vol('snare'),'hi-hat and kick boosted');
+ s.raw(`var velocities=[];const _sd=sampledDrum;sampledDrum=(ctx,type,when,volume,track,velocity)=>{velocities.push(velocity);}`);
+ for(const a of ['strong','medium','weak'])s.raw(`playKitSound({},'snare',0,{accent:'${a}'})`);
+ assert.deepEqual(s.run('velocities'),[110,100,90]);
+});
 test('off plays nothing',()=>{const {ctx,samples}=play('off');assert.equal(samples.length,0);assert.equal(ctx.log.filter(e=>e.made).length,0);});
 test('instruments to load',()=>{
  assert.deepEqual(s.run(`kitInstruments(['woodblock','beep','off'])`),[]);
